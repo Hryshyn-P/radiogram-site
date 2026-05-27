@@ -1,5 +1,4 @@
 import { FileText } from "lucide-react";
-import { SUPPORT_EMAIL } from "@/components/Layout";
 
 const Terms = () => {
   return (
@@ -16,47 +15,61 @@ const Terms = () => {
         </div>
 
         <div className="space-y-8 rounded-2xl border border-border bg-gradient-card p-7 shadow-card md:p-10">
-          <PolicyBlock title="Acceptance">
-            By downloading or using Radiogram, you agree to these Terms of Use. If you
-            do not agree, please do not use the app.
+          <PolicyBlock title="Operator and Scope">
+            Radiogram is a radio streaming application provided by its developer for
+            personal, non-commercial listening. By using the app, you agree to these
+            Terms of Use as they apply to the features and content available in the app.
           </PolicyBlock>
-          <PolicyBlock title="License">
-            Radiogram grants you a personal, non-exclusive, non-transferable license to
-            use the app on Apple devices you own or control, in accordance with the
-            Apple Media Services Terms.
+          <PolicyBlock title="Service Description">
+            Radiogram helps users discover online radio stations, browse station
+            metadata, and listen to third-party audio streams. Stream availability,
+            bitrate, artwork, station names, and other metadata may change, degrade, or
+            disappear at any time without notice.
           </PolicyBlock>
-          <PolicyBlock title="Acceptable use">
-            You agree not to misuse the app, attempt to reverse engineer it, or use it
-            to infringe third-party rights. Stations are provided as a directory of
-            publicly available streams; you are responsible for complying with the
-            rules of the broadcasters you listen to.
+          <PolicyBlock title="Acceptable Use">
+            You agree to use the app lawfully and only for its intended purpose. You
+            may not interfere with the app, attempt unauthorized access, reverse
+            engineer restricted parts of the service, or use the app in a way that
+            disrupts third-party stream providers or other users.
           </PolicyBlock>
-          <PolicyBlock title="Subscriptions & purchases">
-            Subscriptions auto-renew through your Apple ID unless cancelled at least 24
-            hours before the end of the current period. Manage or cancel subscriptions
-            in your Apple ID settings. Refunds are handled by Apple under their
-            standard policy.
+          <PolicyBlock title="Third-Party Content and Rights">
+            Radio streams, station logos, trademarks, names, and metadata are provided
+            by third parties and remain the property of their respective owners.
+            Radiogram does not claim ownership of third-party station content and does
+            not guarantee that such content is accurate, authorized, or continuously
+            available.
           </PolicyBlock>
-          <PolicyBlock title="Content disclaimer">
-            Radiogram aggregates third-party radio streams. We do not control, endorse,
-            or take responsibility for the content broadcast by any station. Stations
-            may go offline, change content, or become unavailable at any time.
+          <PolicyBlock title="Station Audio Advertising">
+            Some radio directories, stream providers, radio stations, or station owners
+            may include audio advertising, sponsorship messages, announcements, or
+            other promotional content inside their own streams. This content is part of
+            the third-party stream and is not inserted, selected, controlled, or
+            removable by Radiogram. A Radiogram subscription or other support purchase
+            does not remove advertising or promotional audio that is embedded in a
+            station's own stream.
           </PolicyBlock>
-          <PolicyBlock title="Limitation of liability">
-            Radiogram is provided "as is" without warranties of any kind. To the
-            fullest extent permitted by law, we are not liable for any indirect,
-            incidental, or consequential damages arising from your use of the app.
+          <PolicyBlock title="Availability and Changes">
+            The app and its features may be updated, limited, suspended, or removed at
+            any time. Some functionality depends on internet connectivity, device
+            compatibility, and optional permissions such as location access used for
+            nearby station suggestions.
           </PolicyBlock>
-          <PolicyBlock title="Changes">
-            We may update these terms occasionally. Continued use of the app after an
-            update constitutes acceptance of the revised terms.
+          <PolicyBlock title="Disclaimer of Warranties">
+            Radiogram is provided on an as-is and as-available basis, without
+            warranties of any kind to the fullest extent permitted by applicable law. We
+            do not guarantee uninterrupted playback, error-free operation, continued
+            compatibility, or the ongoing availability of any station or stream.
           </PolicyBlock>
-          <PolicyBlock title="Contact">
-            Questions about these terms? Email{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">
-              {SUPPORT_EMAIL}
-            </a>
-            .
+          <PolicyBlock title="Limitation of Liability">
+            To the maximum extent permitted by law, the developer of Radiogram will not
+            be liable for indirect, incidental, special, consequential, or data-related
+            losses arising from the use of the app, the unavailability of radio
+            streams, or reliance on third-party content or metadata.
+          </PolicyBlock>
+          <PolicyBlock title="Governing Terms">
+            These terms apply together with any mandatory consumer rights and, where
+            applicable, the standard Apple terms that govern licensed App Store
+            applications.
           </PolicyBlock>
         </div>
       </div>

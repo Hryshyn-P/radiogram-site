@@ -1,5 +1,4 @@
 import { ShieldCheck } from "lucide-react";
-import { SUPPORT_EMAIL } from "@/components/Layout";
 
 const Privacy = () => {
   return (
@@ -17,42 +16,57 @@ const Privacy = () => {
 
         <div className="space-y-8 rounded-2xl border border-border bg-gradient-card p-7 shadow-card md:p-10">
           <PolicyBlock title="Overview">
-            Radiogram is designed with privacy in mind. We do not require an account to
-            listen, and we do not collect personal information beyond what is strictly
-            necessary to operate the app.
+            Radiogram is designed to minimize data collection. The app stores certain
+            preferences locally on your device and only uses data needed to provide
+            radio playback, discovery features, and nearby recommendations.
           </PolicyBlock>
-          <PolicyBlock title="Information we collect">
-            Radiogram does not collect personal data such as your name, email, or
-            contact information. The app may use anonymous, aggregated diagnostic data
-            provided by Apple to help us improve stability and performance. Station
-            playback happens directly between your device and the station's public
-            stream.
+          <PolicyBlock title="Data Stored on Device">
+            The app stores settings and usage preferences locally on your device, such
+            as selected theme, app language, favorites, recent listening data, filters,
+            and player preferences. This information is used to improve your in-app
+            experience and is not required to be shared externally for basic playback.
           </PolicyBlock>
-          <PolicyBlock title="Purchases">
-            In-app purchases and subscriptions are processed by Apple. Radiogram does
-            not see or store your payment details. Purchase status is verified through
-            Apple's StoreKit and tied to your Apple ID.
+          <PolicyBlock title="Location">
+            If you grant location permission, the app uses your approximate location to
+            determine nearby countries and improve station suggestions. Location access
+            is optional and is not required to listen to radio streams.
           </PolicyBlock>
-          <PolicyBlock title="Third-party streams">
-            Stations available in Radiogram are operated by independent broadcasters.
-            When you play a station, your device connects to that broadcaster's stream.
-            Their own privacy practices apply to that connection.
+          <PolicyBlock title="Network Requests">
+            When you use the app, it connects to radio directories, metadata sources,
+            and stream URLs to load station information and play audio. Those
+            third-party services may receive your IP address, device networking
+            information, and standard request metadata as part of normal internet
+            communication. Station streams may also include audio advertising or
+            promotional content provided by the directory, stream provider, radio
+            station, or station owner.
           </PolicyBlock>
-          <PolicyBlock title="Children">
-            Radiogram is not directed to children under 13 and does not knowingly
-            collect data from them.
+          <PolicyBlock title="Third-Party Services">
+            Because Radiogram relies on third-party radio directories, stream
+            providers, optional external support platforms, and any sponsor
+            destinations you choose to open, their own privacy practices may apply when
+            you connect to their services. Radiogram does not control third-party
+            privacy policies, content, or infrastructure.
           </PolicyBlock>
-          <PolicyBlock title="Your rights">
-            Because we do not collect personal data, there is generally nothing for us
-            to access, modify, or delete on your behalf. If you have questions about
-            your privacy, contact us any time.
+          <PolicyBlock title="Purchases and Support">
+            Radiogram may offer optional App Store purchases that support ongoing
+            development. Purchase processing is handled by Apple. External Ko-fi or
+            Patreon links are optional donations or memberships opened in a browser and
+            do not unlock app features.
+          </PolicyBlock>
+          <PolicyBlock title="Sponsor Messages">
+            Radiogram may show optional first-party sponsor messages only after you
+            enable them in settings. These messages are designed not to interrupt
+            playback and do not use cross-app tracking in this app.
+          </PolicyBlock>
+          <PolicyBlock title="Data Sharing">
+            Radiogram does not sell personal data. Any required privacy disclosures for
+            App Store distribution should also be reflected in App Store Connect
+            privacy answers.
           </PolicyBlock>
           <PolicyBlock title="Contact">
-            For privacy questions, email{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">
-              {SUPPORT_EMAIL}
-            </a>
-            .
+            Questions about privacy or support may be directed through the developer
+            contact details and support resources listed on the App Store product page
+            or the app's support website.
           </PolicyBlock>
         </div>
       </div>
