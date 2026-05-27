@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 const features = [
   {
     icon: Globe2,
-    title: "25,000+ stations worldwide",
+    title: "40,000+ stations worldwide",
     description: "Explore live radio across 40+ languages, thousands of genres, and stations from every corner of the world.",
   },
   {
