@@ -40,7 +40,7 @@ const Support = () => {
               Radiogram <span className="text-primary">Support</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl">
-              Worldwide internet radio for iPhone.
+              Worldwide internet radio for iPhone, iPad, and Mac.
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button
@@ -83,7 +83,7 @@ const Support = () => {
             icon={<Bug className="h-5 w-5" />}
             label="Bug Reports"
             title="Something not working?"
-            description="Send us details about the issue, your iPhone model, and iOS version so we can reproduce and fix it fast."
+            description="Send us details about the issue, your device model, OS version, and what you were doing so we can reproduce and fix it fast."
             email={SUPPORT_EMAIL}
             subject="Radiogram — Bug Report"
           />

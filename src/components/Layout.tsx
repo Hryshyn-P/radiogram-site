@@ -93,7 +93,7 @@ const Layout = () => {
               <span className="font-semibold">Radiogram</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Radiogram is an independent internet radio project.
+              Radiogram is an independent world internet radio player for iPhone, iPad, and Mac.
             </p>
           </div>
 
