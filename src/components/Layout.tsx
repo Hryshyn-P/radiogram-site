@@ -126,7 +126,19 @@ const Layout = () => {
         </div>
         <div className="border-t border-border/60">
           <div className="container mx-auto px-6 py-5 text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Radiogram. All rights reserved.
+            <p>© {new Date().getFullYear()} Radiogram. All rights reserved.</p>
+            <p className="mt-2">
+              Station directory data provided by{" "}
+              <a
+                href="https://www.radio-browser.info/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-foreground"
+              >
+                Radio Browser
+              </a>
+              .
+            </p>
           </div>
         </div>
       </footer>

@@ -11,7 +11,7 @@ const Terms = () => {
           <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
             Terms of Use
           </h1>
-          <p className="mt-4 text-sm text-muted-foreground">Last updated: May 26, 2026</p>
+          <p className="mt-4 text-sm text-muted-foreground">Last updated: June 19, 2026</p>
         </div>
 
         <div className="space-y-8 rounded-2xl border border-border bg-gradient-card p-7 shadow-card md:p-10">
@@ -38,6 +38,29 @@ const Terms = () => {
             Radiogram does not claim ownership of third-party station content and does
             not guarantee that such content is accurate, authorized, or continuously
             available.
+          </PolicyBlock>
+          <PolicyBlock title="Station Directory Attribution">
+            Station directory data is provided by{" "}
+            <a
+              href="https://www.radio-browser.info/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              Radio Browser
+            </a>
+            .
+          </PolicyBlock>
+          <PolicyBlock title="Station Corrections and Removal Requests">
+            Station owners and rights holders can request correction or removal of station
+            listings by contacting us at{" "}
+            <a
+              href="mailto:hpgameslab@gmail.com?subject=Radiogram%20%E2%80%94%20Station%20Correction%20or%20Removal"
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              hpgameslab@gmail.com
+            </a>
+            .
           </PolicyBlock>
           <PolicyBlock title="Station Audio Advertising">
             Some radio directories, stream providers, radio stations, or station owners

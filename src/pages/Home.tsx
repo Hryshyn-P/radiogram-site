@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const APP_STORE_URL = "https://apps.apple.com/app/id6772640690";
+
 const features = [
   {
     icon: Globe2,
@@ -32,7 +34,7 @@ const features = [
   {
     icon: Headphones,
     title: "Native Apple experience",
-    description: "Designed for iPhone, iPad, and Mac with background playback, Lock Screen controls, widgets, and Apple Watch support.",
+    description: "Designed for iPhone, iPad, and Mac with background playback, Lock Screen controls, widgets, and native system media controls.",
   },
 ];
 
@@ -77,7 +79,12 @@ const Home = () => {
                 size="lg"
                 className="rounded-full bg-gradient-accent text-primary-foreground shadow-glow hover:opacity-95"
               >
-                <a href="#" aria-label="Download on the App Store">
+                <a
+                  href={APP_STORE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Download Radiogram on the App Store"
+                >
                   <Download className="mr-2 h-4 w-4" /> Download on the App Store
                 </a>
               </Button>
@@ -203,7 +210,12 @@ const Home = () => {
                 size="lg"
                 className="rounded-full bg-gradient-accent text-primary-foreground shadow-glow hover:opacity-95"
               >
-                <a href="#">
+                <a
+                  href={APP_STORE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Download Radiogram on the App Store"
+                >
                   <Download className="mr-2 h-4 w-4" /> Download on the App Store
                 </a>
               </Button>

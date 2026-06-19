@@ -6,7 +6,11 @@ import { SUPPORT_EMAIL } from "@/components/Layout";
 const faqs = [
   {
     q: "How do I report a station issue?",
-    a: `Tap the station, then use the report option, or email us at ${SUPPORT_EMAIL} with the station name and a short description. We review every report.`,
+    a: `Email us at ${SUPPORT_EMAIL} with the station name, stream URL if available, and a short description. We review every report.`,
+  },
+  {
+    q: "How can a station owner or rights holder request a correction or removal?",
+    a: `Email ${SUPPORT_EMAIL} with the station name, listing details, requested action, and information showing your relationship to the station or content. We will review the request and respond by email.`,
   },
   {
     q: "How do I restore purchases?",
