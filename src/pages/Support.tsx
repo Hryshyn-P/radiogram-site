@@ -1,6 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Bug, Briefcase, Radio, Mail, Clock } from "lucide-react";
+import { Bug, Briefcase, Radio, Mail, Clock, Heart, Coffee } from "lucide-react";
 import { SUPPORT_EMAIL } from "@/components/Layout";
 
 const faqs = [
@@ -23,6 +23,21 @@ const faqs = [
   {
     q: "How do I suggest a feature?",
     a: `We love feedback. Send your ideas to ${SUPPORT_EMAIL} — every email is read by a human, and many features come directly from listener suggestions.`,
+  },
+];
+
+const donationLinks = [
+  {
+    name: "Patreon",
+    description: "Support HP Games Lab with a recurring membership.",
+    href: "https://www.patreon.com/c/HPGamesLab",
+    icon: Heart,
+  },
+  {
+    name: "Ko-fi",
+    description: "Make a one-time donation to support Radiogram development.",
+    href: "https://ko-fi.com/hpgameslab",
+    icon: Coffee,
   },
 ];
 
@@ -104,6 +119,45 @@ const Support = () => {
         <div className="mx-auto mt-8 flex max-w-4xl items-center justify-center gap-2 text-sm text-muted-foreground">
           <Clock className="h-4 w-4 text-primary" />
           Average response time: 1–3 business days
+        </div>
+      </section>
+
+      {/* Support Development */}
+      <section className="border-t border-border/60 bg-card/30">
+        <div className="container mx-auto px-6 py-20 md:py-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">
+              Support development
+            </p>
+            <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
+              Help us keep Radiogram growing
+            </h2>
+            <p className="mt-5 text-base text-muted-foreground md:text-lg">
+              Radiogram is built by a small independent team. If you enjoy the app, you can
+              support its continued development through Patreon or Ko-fi.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+            {donationLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-4 rounded-2xl border border-border bg-gradient-card p-6 shadow-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
+                aria-label={`Support HP Games Lab on ${link.name}`}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <link.icon className="h-6 w-6" />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-lg font-semibold tracking-tight">Support on {link.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{link.description}</p>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
