@@ -90,7 +90,7 @@ const StationDetails = () => {
       <section className="app-upsell">
         <div className="app-upsell__icon"><Headphones /></div>
         <div><span className="eyebrow">Take it with you</span><h2>More listening in the Radiogram app.</h2><p>Save favorite stations, recognize songs, keep your history, and listen with native Lock Screen controls on iPhone, iPad, and Mac.</p></div>
-        <a className="primary-button" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> Download</a>
+        <a className="primary-button download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> Download</a>
       </section>
 
       {related.length > 0 && <section className="related-section"><div className="section-heading"><div><span className="eyebrow">Keep exploring</span><h2>More from {station.country}</h2></div><Link to={`/radio?country=${encodeURIComponent(station.country)}`}>See all</Link></div><div className="station-results station-results--grid">{related.map((item) => <StationCard key={item.id} station={item} />)}</div></section>}

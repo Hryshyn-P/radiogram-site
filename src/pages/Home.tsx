@@ -39,7 +39,7 @@ const Home = () => {
             <p>{t("heroBody")}</p>
             <div className="home-hero__actions">
               <Link className="primary-button primary-button--large" to="/radio"><Radio /> {t("startListening")}</Link>
-              <a className="secondary-button" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getTheApp")}</a>
+              <a className="secondary-button download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getTheApp")}</a>
             </div>
             <div className="platform-note"><span>{t("builtFor")}</span><strong>iPhone</strong><strong>iPad</strong><strong>Mac</strong></div>
           </div>
@@ -74,7 +74,7 @@ const Home = () => {
       <section className="page-shell home-app-cta">
         <div className="home-app-cta__icon"><Sparkles /></div>
         <div><span className="eyebrow">{t("fullExperience")}</span><h2>{t("remembered")}</h2><p>{t("appBody")}</p><div className="feature-pills"><span><Radio /> {t("favorites")}</span><span><Sparkles /> {t("recognition")}</span><span><Headphones /> {t("nativeControls")}</span></div></div>
-        <a className="primary-button primary-button--large" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("download")}</a>
+        <a className="primary-button primary-button--large download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("download")}</a>
       </section>
     </>
   );

@@ -23,6 +23,9 @@ const AppPlayer = () => {
           </span>
         </Link>
         <div className="app-player__controls">
+          <a className="player-download" href={APP_STORE_URL} target="_blank" rel="noreferrer">
+            <Download /> <span>{t("getTheApp")}</span>
+          </a>
           <button className="round-button round-button--primary" onClick={toggle} aria-label={isPlaying ? t("pause") : t("play")}>
             {isLoading ? <PlaybackLoader /> : isPlaying ? <Pause /> : <Play />}
           </button>
@@ -30,9 +33,6 @@ const AppPlayer = () => {
             <Volume2 />
             <input type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
           </label>
-          <a className="player-download" href={APP_STORE_URL} target="_blank" rel="noreferrer">
-            <Download /> <span>{t("getTheApp")}</span>
-          </a>
           <button className="icon-button" onClick={stop} aria-label={t("closePlayer")}><X /></button>
         </div>
       </div>

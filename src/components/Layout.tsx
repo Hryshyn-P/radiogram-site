@@ -23,9 +23,9 @@ const Layout = () => {
         <div className="site-header__inner">
           <Link to="/" className="brand" onClick={() => setOpen(false)}><span className="brand__mark"><Radio /></span><span>Radiogram</span></Link>
           <nav className="desktop-nav" aria-label="Main navigation">{navItems.map((item) => <NavLink key={item.to} to={item.to} className={({ isActive }) => cn(isActive && "is-active")}><item.icon />{item.label}</NavLink>)}</nav>
-          <div className="header-actions">{languageSelect}<a className="header-download" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getApp")}</a><button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label={t("toggleMenu")}>{open ? <X /> : <Menu />}</button></div>
+          <div className="header-actions">{languageSelect}<a className="header-download download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getApp")}</a><button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label={t("toggleMenu")}>{open ? <X /> : <Menu />}</button></div>
         </div>
-        {open && <nav className="mobile-nav" aria-label="Mobile navigation">{navItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)}><item.icon />{item.label}</NavLink>)}<span className="mobile-nav__divider" />{mobileInfoItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)}><item.icon />{item.label}</NavLink>)}<span className="mobile-nav__divider" /><a href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getApp")}</a></nav>}
+        {open && <nav className="mobile-nav" aria-label="Mobile navigation">{navItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)}><item.icon />{item.label}</NavLink>)}<span className="mobile-nav__divider" />{mobileInfoItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)}><item.icon />{item.label}</NavLink>)}<span className="mobile-nav__divider" /><a className="download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getApp")}</a></nav>}
       </header>
       <main className="site-main"><Outlet /></main>
       <footer className="site-footer">
