@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ExternalLink, Headphones, LoaderCircle } from "lucide-react";
+import { ArrowLeft, ExternalLink, Headphones, LoaderCircle, Share2 } from "lucide-react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Artwork } from "@/components/Artwork";
 import EpisodeRow from "@/components/EpisodeRow";
 import { lookupPodcast } from "@/lib/podcasts";
+import { podcastShareData, shareOrCopy } from "@/lib/share";
 import { useSeo } from "@/lib/seo";
 import type { PodcastEpisode, PodcastShow } from "@/types/catalog";
 
@@ -42,12 +43,16 @@ const PodcastDetails = () => {
   if (loading) return <div className="loading-state page-shell"><LoaderCircle className="spin" /><p>Loading episodes…</p></div>;
   if (error || !show) return <div className="empty-state page-shell"><Headphones /><h1>Podcast not found</h1><p>The show may no longer be available in this storefront.</p><Link className="primary-button" to="/podcasts">Browse podcasts</Link></div>;
 
+  const share = async () => {
+    await shareOrCopy(podcastShareData(show.name, show.id));
+  };
+
   return (
     <div className="podcast-detail page-shell">
       <Link to="/podcasts" className="back-link"><ArrowLeft /> Podcast search</Link>
       <section className="podcast-hero">
         <Artwork src={show.artworkUrl} alt={`${show.name} cover`} className="podcast-hero__art" />
-        <div><span className="eyebrow">{show.genres[0] || "Podcast"}</span><h1>{show.name}</h1><p>{show.artistName}{show.country ? ` · ${show.country}` : ""}</p><div className="station-hero__tags">{show.genres.slice(0, 5).map((genre) => <span key={genre}>{genre}</span>)}</div>{show.appleUrl && <a className="secondary-button" href={show.appleUrl} target="_blank" rel="noreferrer"><ExternalLink /> View on Apple Podcasts</a>}</div>
+        <div><span className="eyebrow">{show.genres[0] || "Podcast"}</span><h1>{show.name}</h1><p>{show.artistName}{show.country ? ` · ${show.country}` : ""}</p><div className="station-hero__tags">{show.genres.slice(0, 5).map((genre) => <span key={genre}>{genre}</span>)}</div><div className="station-hero__actions"><button className="secondary-button" onClick={share}><Share2 /> Share</button>{show.appleUrl && <a className="secondary-button" href={show.appleUrl} target="_blank" rel="noreferrer"><ExternalLink /> View on Apple Podcasts</a>}</div></div>
       </section>
       <section className="episodes-section">
         <div className="section-heading"><div><span className="eyebrow">Full episodes</span><h2>{episodes.length} episodes</h2></div><select value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); setVisibleCount(30); }}><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></div>

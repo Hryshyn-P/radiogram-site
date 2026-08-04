@@ -7,6 +7,7 @@ import PlaybackLoader from "@/components/PlaybackLoader";
 import StationCard from "@/components/StationCard";
 import { usePlayer } from "@/context/PlayerContext";
 import { fetchStation, fetchStations, reportStationClick } from "@/lib/radioBrowser";
+import { shareOrCopy, stationShareData } from "@/lib/share";
 import { stationPath } from "@/lib/slug";
 import { useSeo } from "@/lib/seo";
 import type { Station } from "@/types/catalog";
@@ -64,9 +65,7 @@ const StationDetails = () => {
     });
   };
   const share = async () => {
-    const data = { title: `${station.name} on Radiogram`, text: `Listen to ${station.name} live`, url: window.location.href };
-    if (navigator.share) await navigator.share(data).catch(() => undefined);
-    else await navigator.clipboard?.writeText(window.location.href);
+    await shareOrCopy(stationShareData(station.name, station.id));
   };
 
   return (
