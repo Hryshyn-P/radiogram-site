@@ -33,7 +33,8 @@ const AppShowcase = () => {
   const draggedRef = useRef(false);
   const initialPositionRef = useRef(true);
   const [position, setPosition] = useState(middleStart);
-  const [paused, setPaused] = useState(false);
+  const [activePosition, setActivePosition] = useState(middleStart);
+  const [interacting, setInteracting] = useState(false);
   const [inView, setInView] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -71,27 +72,28 @@ const AppShowcase = () => {
       normalizeTimerRef.current = setTimeout(() => {
         const normalized = middleStart + modulo(position);
         scrollToPosition(normalized, "auto");
+        setActivePosition(normalized);
         setPosition(normalized);
       }, reduceMotion ? 0 : 650);
     }
   }, [position, reduceMotion, scrollToPosition]);
 
   useEffect(() => {
-    if (paused || reduceMotion || !inView) return;
+    if (interacting || reduceMotion || !inView) return;
     const timer = window.setInterval(() => {
       setPosition((index) => index + 1);
     }, 5600);
     return () => window.clearInterval(timer);
-  }, [inView, paused, reduceMotion]);
+  }, [inView, interacting, reduceMotion]);
 
   useEffect(() => () => {
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     if (normalizeTimerRef.current) clearTimeout(normalizeTimerRef.current);
   }, []);
 
-  const syncActiveSlide = () => {
+  const closestSlide = () => {
     const viewport = viewportRef.current;
-    if (!viewport) return;
+    if (!viewport) return middleStart;
     const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
     let closest = middleStart;
     let closestDistance = Number.POSITIVE_INFINITY;
@@ -100,15 +102,22 @@ const AppShowcase = () => {
       const distance = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - viewportCenter);
       if (distance < closestDistance) { closest = index; closestDistance = distance; }
     });
+    return closest;
+  };
+
+  const syncScrollPosition = () => {
+    const closest = closestSlide();
     manualScrollRef.current = false;
-    setPaused(false);
+    setInteracting(false);
+    setActivePosition(closest);
     setPosition(closest);
   };
 
   const handleScroll = () => {
+    setActivePosition(closestSlide());
     if (!manualScrollRef.current) return;
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = setTimeout(syncActiveSlide, 140);
+    scrollTimerRef.current = setTimeout(syncScrollPosition, 140);
   };
 
   const move = (direction: -1 | 1) => {
@@ -118,6 +127,8 @@ const AppShowcase = () => {
   const activatePosition = (index: number) => {
     manualScrollRef.current = false;
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    setInteracting(false);
+    setActivePosition(index);
     setPosition(index);
   };
 
@@ -125,7 +136,7 @@ const AppShowcase = () => {
     pointerStartRef.current = { x: event.clientX, y: event.clientY };
     draggedRef.current = false;
     manualScrollRef.current = true;
-    setPaused(true);
+    setInteracting(true);
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -136,18 +147,18 @@ const AppShowcase = () => {
 
   const handlePointerEnd = () => {
     pointerStartRef.current = null;
+    if (!draggedRef.current) {
+      manualScrollRef.current = false;
+      setInteracting(false);
+    }
   };
 
-  const active = modulo(position);
+  const active = modulo(activePosition);
 
   return (
     <section
       className="app-showcase"
       aria-labelledby="app-showcase-title"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}
     >
       <div className="page-shell app-showcase__heading">
         <div>
@@ -180,7 +191,7 @@ const AppShowcase = () => {
             <figure
               key={`${slide.copy}-${slide.src}`}
               ref={(node) => { slideRefs.current[physicalIndex] = node; }}
-              className={physicalIndex === position ? "is-active" : ""}
+              className={physicalIndex === activePosition ? "is-active" : ""}
               role={accessible ? "button" : undefined}
               tabIndex={accessible ? 0 : -1}
               aria-roledescription={accessible ? "slide" : undefined}
