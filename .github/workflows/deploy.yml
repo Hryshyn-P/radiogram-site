@@ -34,6 +34,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          SEO_STATION_LIMIT: 20000
+          SEO_PODCAST_LIMIT: 600
 
       - name: Add SPA fallback
         run: cp dist/index.html dist/404.html

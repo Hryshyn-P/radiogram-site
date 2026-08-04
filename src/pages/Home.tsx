@@ -1,230 +1,80 @@
-import { Button } from "@/components/ui/button";
-import {
-  Radio,
-  Globe2,
-  Headphones,
-  Sparkles,
-  Search,
-  Tags,
-  Music2,
-  Shuffle,
-  Download,
-  ArrowRight,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Download, Headphones, Radio, Search, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const APP_STORE_URL = "https://apps.apple.com/app/id6772640690";
-
-const features = [
-  {
-    icon: Globe2,
-    title: "40,000+ stations worldwide",
-    description: "Explore live radio across 40+ languages, thousands of genres, and stations from every corner of the world.",
-  },
-  {
-    icon: Search,
-    title: "Smart discovery",
-    description: "Search by station, genre, country, tag, and keywords, then filter by geo, popularity, recent plays, or nearby stations.",
-  },
-  {
-    icon: Music2,
-    title: "Track recognition",
-    description: "Recognize songs with Shazam-powered lookup, save found tracks, and keep favorite stations close.",
-  },
-  {
-    icon: Headphones,
-    title: "Native Apple experience",
-    description: "Designed for iPhone, iPad, and Mac with background playback, Lock Screen controls, widgets, and native system media controls.",
-  },
-];
-
-const discoveryTags = [
-  "Music",
-  "Podcasts",
-  "News",
-  "Ambient",
-  "Meditation",
-  "Soundtracks",
-  "Comedy",
-  "Audiobooks",
-  "Fan stations",
-  "Niche genres",
-];
+import { APP_STORE_URL } from "@/components/AppPlayer";
+import PodcastCard from "@/components/PodcastCard";
+import StationCard from "@/components/StationCard";
+import { searchPodcasts } from "@/lib/podcasts";
+import { fetchStations, fetchTags } from "@/lib/radioBrowser";
+import { useSeo } from "@/lib/seo";
+import { facetPath } from "@/lib/slug";
+import type { CatalogFacet, PodcastShow, Station } from "@/types/catalog";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Home = () => {
+  const [stations, setStations] = useState<Station[]>([]);
+  const [podcasts, setPodcasts] = useState<PodcastShow[]>([]);
+  const [featuredTags, setFeaturedTags] = useState<CatalogFacet[]>([]);
+  const { locale, t } = useLanguage();
+  useSeo({
+    title: "Radiogram — live radio and podcasts from around the world",
+    description: "Listen to thousands of live radio stations and discover podcasts online. Get Radiogram for iPhone, iPad, and Mac for favorites, song recognition, and native playback.",
+    path: "/",
+  });
+
+  useEffect(() => {
+    fetchStations({ order: "votes", limit: 6 }).then(setStations).catch(() => undefined);
+    fetchTags(3).then(setFeaturedTags).catch(() => undefined);
+    searchPodcasts("daily news", (navigator.language.split("-")[1] || "US").toUpperCase()).then((items) => setPodcasts(items.slice(0, 6))).catch(() => undefined);
+  }, []);
+
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,hsl(24_95%_58%/0.18),transparent_60%)]" />
-        <div className="container relative mx-auto px-6 pt-20 pb-24 md:pt-32 md:pb-40">
-          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-accent shadow-glow">
-              <Radio className="h-8 w-8 text-primary-foreground" strokeWidth={2.25} />
+      <section className="home-hero">
+        <div className="home-hero__glow" />
+        <div className="page-shell home-hero__inner">
+          <div className="home-hero__copy">
+            <span className="eyebrow"><span className="live-dot" /> {t("liveWorld")}</span>
+            <h1>{t("heroTitleA")}<br /><span>{t("heroTitleB")}</span></h1>
+            <p>{t("heroBody")}</p>
+            <div className="home-hero__actions">
+              <Link className="primary-button primary-button--large" to="/radio"><Radio /> {t("startListening")}</Link>
+              <a className="secondary-button" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("getTheApp")}</a>
             </div>
-            <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              For iPhone, iPad, and Mac
-            </p>
-            <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl">
-              The world's radio,{" "}
-              <span className="text-primary">on every Apple screen.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl">
-              Radiogram is a modern world internet radio player for music discovery,
-              convenience, and deep Apple platform integration.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-gradient-accent text-primary-foreground shadow-glow hover:opacity-95"
-              >
-                <a
-                  href={APP_STORE_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Download Radiogram on the App Store"
-                >
-                  <Download className="mr-2 h-4 w-4" /> Download on the App Store
-                </a>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="rounded-full border-border bg-card/40 backdrop-blur hover:bg-card"
-              >
-                <Link to="/support">
-                  Get Support <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
+            <div className="platform-note"><span>{t("builtFor")}</span><strong>iPhone</strong><strong>iPad</strong><strong>Mac</strong></div>
+          </div>
+          <div className="radio-orbit" aria-hidden="true">
+            <div className="radio-orbit__ring radio-orbit__ring--one" />
+            <div className="radio-orbit__ring radio-orbit__ring--two" />
+            <div className="radio-orbit__core"><Radio /></div>
+            <span className="radio-orbit__label radio-orbit__label--one">Tokyo · Jazz</span>
+            <span className="radio-orbit__label radio-orbit__label--two">London · News</span>
+            <span className="radio-orbit__label radio-orbit__label--three">São Paulo · Soul</span>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="container mx-auto px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">
-            Why Radiogram
-          </p>
-          <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-            Tuned for the way you listen
-          </h2>
-          <p className="mt-5 text-base text-muted-foreground md:text-lg">
-            Everything you need to discover, save, and enjoy radio across iPhone, iPad, and Mac.
-          </p>
-        </div>
+      <section className="page-shell home-section">
+        <div className="section-heading"><div><span className="eyebrow">{t("onAir")}</span><h2>{t("popularStations")}</h2></div><Link to="/radio">{t("exploreAll")} <ArrowRight /></Link></div>
+        <div className="station-results station-results--grid">{stations.map((station) => <StationCard key={station.id} station={station} />)}</div>
+      </section>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-5 sm:grid-cols-2">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="group rounded-2xl border border-border bg-gradient-card p-7 shadow-card transition-all hover:-translate-y-1 hover:border-primary/40"
-            >
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <f.icon className="h-5 w-5" />
-              </div>
-              <h3 className="text-xl font-semibold tracking-tight">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.description}</p>
-            </div>
-          ))}
+      <section className="home-discovery">
+        <div className="page-shell home-discovery__grid">
+          <div><span className="eyebrow">{t("findFrequency")}</span><h2>{t("discoveryTitle")}</h2><p>{t("discoveryBody")}</p><Link className="primary-button" to="/radio"><Search /> {t("openFinder")}</Link></div>
+          <div className="discovery-cards">{featuredTags.map((tag, index) => <Link key={tag.name} to={facetPath("tag", tag.name)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{tag.name}</strong><small>{tag.stationcount.toLocaleString(locale)} {t("liveStations")}</small></Link>)}<Link to="/radio?sort=random"><span>{String(featuredTags.length + 1).padStart(2, "0")}</span><strong>{t("surprise")}</strong><small>{t("spinWorld")}</small></Link></div>
         </div>
       </section>
 
-      {/* Discovery */}
-      <section className="border-y border-border/60 bg-card/30">
-        <div className="container mx-auto px-6 py-20 md:py-24">
-          <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[0.95fr_1.05fr] md:items-center">
-            <div>
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">
-                Discover more
-              </p>
-              <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-                From mainstream radio to deeply specific niche stations.
-              </h2>
-              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-                Browse music, podcasts, news, ambient, meditation, soundtracks, comedy,
-                audiobooks, fan stations, and thousands of smaller categories in one place.
-                Most core features are available completely free.
-              </p>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="rounded-2xl border border-border bg-gradient-card p-7 shadow-card">
-                <Tags className="mb-5 h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold tracking-tight">Flexible browsing</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Country and tag categories, recent and popular sections, dynamic trending
-                  rankings, and grid or list display modes.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-gradient-card p-7 shadow-card">
-                <Shuffle className="mb-5 h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold tracking-tight">Quick exploration</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Jump into something new with random station discovery, recently played sorting,
-                  interactive likes, and visit counters.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-gradient-card p-7 shadow-card sm:col-span-2">
-                <Sparkles className="mb-5 h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold tracking-tight">Built for real listening</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  A built-in mini player, full-size vinyl-inspired player, station logos, current
-                  track info, favorites from the player, light and dark themes, and multiple app
-                  icon styles.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mx-auto mt-12 flex max-w-5xl flex-wrap justify-center gap-2">
-            {discoveryTags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-border bg-background px-4 py-2 text-sm text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
+      <section className="page-shell home-section">
+        <div className="section-heading"><div><span className="eyebrow">{t("freshEpisodes")}</span><h2>{t("podcastsWorth")}</h2></div><Link to="/podcasts">{t("searchPodcasts")} <ArrowRight /></Link></div>
+        <div className="podcast-grid">{podcasts.map((show) => <PodcastCard key={show.id} show={show} />)}</div>
       </section>
 
-      {/* CTA */}
-      <section className="container mx-auto px-6 py-24">
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-border bg-gradient-card p-10 text-center shadow-card md:p-16">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,hsl(24_95%_58%/0.18),transparent_60%)]" />
-          <div className="relative">
-            <h2 className="text-3xl font-semibold tracking-tight md:text-5xl">
-              Start listening today.
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Free to download. Tune into worldwide radio on iPhone, iPad, and Mac in seconds.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-gradient-accent text-primary-foreground shadow-glow hover:opacity-95"
-              >
-                <a
-                  href={APP_STORE_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Download Radiogram on the App Store"
-                >
-                  <Download className="mr-2 h-4 w-4" /> Download on the App Store
-                </a>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full">
-                <Link to="/support">Support Center</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+      <section className="page-shell home-app-cta">
+        <div className="home-app-cta__icon"><Sparkles /></div>
+        <div><span className="eyebrow">{t("fullExperience")}</span><h2>{t("remembered")}</h2><p>{t("appBody")}</p><div className="feature-pills"><span><Radio /> {t("favorites")}</span><span><Sparkles /> {t("recognition")}</span><span><Headphones /> {t("nativeControls")}</span></div></div>
+        <a className="primary-button primary-button--large" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("download")}</a>
       </section>
     </>
   );
