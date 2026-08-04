@@ -1,7 +1,24 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Bug, Briefcase, Radio, Mail, Clock, Heart, Coffee } from "lucide-react";
+import { Bug, Briefcase, Radio, Mail, Clock, Heart, Coffee, Twitter } from "lucide-react";
 import { SUPPORT_EMAIL } from "@/components/Layout";
+
+const IndieHackersIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="16" rx="2" fill="currentColor" />
+    <text
+      x="12"
+      y="15"
+      fill="hsl(var(--primary-foreground))"
+      fontFamily="sans-serif"
+      fontSize="8"
+      fontWeight="800"
+      textAnchor="middle"
+    >
+      IH
+    </text>
+  </svg>
+);
 
 const faqs = [
   {
@@ -26,18 +43,38 @@ const faqs = [
   },
 ];
 
-const donationLinks = [
+const supportLinks = [
   {
     name: "Patreon",
+    title: "Support on Patreon",
+    ariaLabel: "Support HP Games Lab on Patreon",
     description: "Support HP Games Lab with a recurring membership.",
     href: "https://www.patreon.com/c/HPGamesLab",
     icon: Heart,
   },
   {
     name: "Ko-fi",
+    title: "Support on Ko-fi",
+    ariaLabel: "Support HP Games Lab on Ko-fi",
     description: "Make a one-time donation to support Radiogram development.",
     href: "https://ko-fi.com/hpgameslab",
     icon: Coffee,
+  },
+  {
+    name: "Twitter",
+    title: "Follow on Twitter",
+    ariaLabel: "Follow @hpgameslab on Twitter",
+    description: "Follow @hpgameslab for Radiogram news and development updates.",
+    href: "https://x.com/hpgameslab",
+    icon: Twitter,
+  },
+  {
+    name: "Indie Hackers",
+    title: "Follow on Indie Hackers",
+    ariaLabel: "Follow hpgameslab on Indie Hackers",
+    description: "Follow the HP Games Lab journey and behind-the-scenes progress.",
+    href: "https://www.indiehackers.com/hpgameslab",
+    icon: IndieHackersIcon,
   },
 ];
 
@@ -134,25 +171,25 @@ const Support = () => {
             </h2>
             <p className="mt-5 text-base text-muted-foreground md:text-lg">
               Radiogram is built by a small independent team. If you enjoy the app, you can
-              support its continued development through Patreon or Ko-fi.
+              support its development or follow HP Games Lab for updates.
             </p>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
-            {donationLinks.map((link) => (
+          <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
+            {supportLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-4 rounded-2xl border border-border bg-gradient-card p-6 shadow-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
-                aria-label={`Support HP Games Lab on ${link.name}`}
+                aria-label={link.ariaLabel}
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <link.icon className="h-6 w-6" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-lg font-semibold tracking-tight">Support on {link.name}</h3>
+                  <h3 className="text-lg font-semibold tracking-tight">{link.title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{link.description}</p>
                 </div>
               </a>
