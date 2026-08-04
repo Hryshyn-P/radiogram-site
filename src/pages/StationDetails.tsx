@@ -73,7 +73,10 @@ const StationDetails = () => {
     <div className="station-detail page-shell">
       <Link to="/radio" className="back-link"><ArrowLeft /> All stations</Link>
       <section className="station-hero">
-        <Artwork src={station.imageUrl} alt={`${station.name} logo`} className="station-hero__art" fallbackId={station.id} fallbackTitle={station.name} />
+        <div className="station-hero__visual">
+          <span className="station-hero__vinyl" aria-hidden="true" />
+          <Artwork src={station.imageUrl} alt={`${station.name} logo`} className="station-hero__art" fallbackId={station.id} fallbackTitle={station.name} />
+        </div>
         <div className="station-hero__copy">
           <span className="eyebrow">Live from {station.country}</span>
           <h1>{station.name}</h1>
