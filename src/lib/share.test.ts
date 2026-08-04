@@ -27,13 +27,17 @@ describe("Radiogram universal-link sharing", () => {
     });
   });
 
-  it("passes the universal link to the Web Share API", async () => {
+  it("shares the promo text above the universal link as one message", async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "share", { configurable: true, value: share });
     const data = stationShareData("Dance Wave!", "rb_station-id");
 
     await shareOrCopy(data);
 
-    expect(share).toHaveBeenCalledWith(data);
+    expect(share).toHaveBeenCalledWith({
+      title: "Dance Wave!",
+      text:
+        "📻 Listen to Dance Wave! on Radiogram 🎶\n\nhttps://radiogramapp.duckdns.org/station/rb_station-id",
+    });
   });
 });

@@ -16,10 +16,12 @@ export const podcastShareData = (name: string, collectionId: number): ShareData 
 });
 
 export const shareOrCopy = async (data: ShareData) => {
+  const { url, text, ...rest } = data;
+  const sharedText = [text, url].filter(Boolean).join("\n\n");
+
   if (navigator.share) {
-    await navigator.share(data).catch(() => undefined);
+    await navigator.share({ ...rest, text: sharedText }).catch(() => undefined);
     return;
   }
-  const clipboardText = [data.text, data.url].filter(Boolean).join("\n\n");
-  await navigator.clipboard?.writeText(clipboardText);
+  await navigator.clipboard?.writeText(sharedText);
 };
