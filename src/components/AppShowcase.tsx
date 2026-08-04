@@ -20,6 +20,7 @@ const slides = [
 ];
 const loopSlides = Array.from({ length: 3 }, (_, copy) => slides.map((slide, index) => ({ ...slide, copy, index }))).flat();
 const middleStart = slides.length;
+const manualCooldown = 3000;
 const modulo = (value: number) => (value + slides.length) % slides.length;
 
 const AppShowcase = () => {
@@ -35,6 +36,8 @@ const AppShowcase = () => {
   const [position, setPosition] = useState(middleStart);
   const [activePosition, setActivePosition] = useState(middleStart);
   const [interacting, setInteracting] = useState(false);
+  const [cooldownPending, setCooldownPending] = useState(false);
+  const [cooldownVersion, setCooldownVersion] = useState(0);
   const [inView, setInView] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -80,16 +83,28 @@ const AppShowcase = () => {
 
   useEffect(() => {
     if (interacting || reduceMotion || !inView) return;
+    if (cooldownPending) {
+      const cooldown = window.setTimeout(() => {
+        setCooldownPending(false);
+        setPosition((index) => index + 1);
+      }, manualCooldown);
+      return () => window.clearTimeout(cooldown);
+    }
     const timer = window.setInterval(() => {
       setPosition((index) => index + 1);
     }, 5600);
     return () => window.clearInterval(timer);
-  }, [inView, interacting, reduceMotion]);
+  }, [cooldownPending, cooldownVersion, inView, interacting, reduceMotion]);
 
   useEffect(() => () => {
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     if (normalizeTimerRef.current) clearTimeout(normalizeTimerRef.current);
   }, []);
+
+  const startAutoplayCooldown = () => {
+    setCooldownPending(true);
+    setCooldownVersion((version) => version + 1);
+  };
 
   const closestSlide = () => {
     const viewport = viewportRef.current;
@@ -111,17 +126,26 @@ const AppShowcase = () => {
     setInteracting(false);
     setActivePosition(closest);
     setPosition(closest);
+    startAutoplayCooldown();
+  };
+
+  const scheduleScrollSync = () => {
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(syncScrollPosition, 140);
   };
 
   const handleScroll = () => {
     setActivePosition(closestSlide());
     if (!manualScrollRef.current) return;
-    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = setTimeout(syncScrollPosition, 140);
+    scheduleScrollSync();
   };
 
   const move = (direction: -1 | 1) => {
+    manualScrollRef.current = false;
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    setInteracting(false);
     setPosition((index) => index + direction);
+    startAutoplayCooldown();
   };
 
   const activatePosition = (index: number) => {
@@ -130,13 +154,19 @@ const AppShowcase = () => {
     setInteracting(false);
     setActivePosition(index);
     setPosition(index);
+    startAutoplayCooldown();
+  };
+
+  const beginManualInteraction = () => {
+    if (normalizeTimerRef.current) clearTimeout(normalizeTimerRef.current);
+    manualScrollRef.current = true;
+    setInteracting(true);
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     pointerStartRef.current = { x: event.clientX, y: event.clientY };
     draggedRef.current = false;
-    manualScrollRef.current = true;
-    setInteracting(true);
+    beginManualInteraction();
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -150,7 +180,15 @@ const AppShowcase = () => {
     if (!draggedRef.current) {
       manualScrollRef.current = false;
       setInteracting(false);
+    } else {
+      scheduleScrollSync();
     }
+  };
+
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaX) < 1 && !event.shiftKey) return;
+    beginManualInteraction();
+    scheduleScrollSync();
   };
 
   const active = modulo(activePosition);
@@ -182,6 +220,7 @@ const AppShowcase = () => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerEnd}
         onPointerCancel={handlePointerEnd}
+        onWheel={handleWheel}
         onScroll={handleScroll}
       >
         <div className="app-showcase__track">

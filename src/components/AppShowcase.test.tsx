@@ -27,6 +27,22 @@ const renderShowcase = () => render(
   </LanguageProvider>,
 );
 
+const setCarouselLayout = (container: HTMLElement) => {
+  const viewport = container.querySelector<HTMLElement>(".app-showcase__viewport");
+  const figures = Array.from(container.querySelectorAll("figure"));
+
+  expect(viewport).not.toBeNull();
+  if (!viewport) throw new Error("Carousel viewport was not rendered");
+
+  Object.defineProperty(viewport, "clientWidth", { configurable: true, value: 300 });
+  Object.defineProperty(viewport, "scrollLeft", { configurable: true, value: 1300, writable: true });
+  figures.forEach((figure, index) => {
+    Object.defineProperty(figure, "clientWidth", { configurable: true, value: 100 });
+    Object.defineProperty(figure, "offsetLeft", { configurable: true, value: index * 100 });
+  });
+  return viewport;
+};
+
 describe("AppShowcase", () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -74,21 +90,50 @@ describe("AppShowcase", () => {
 
   it("activates the centered slide in the same scroll event", () => {
     const { container } = renderShowcase();
-    const viewport = container.querySelector<HTMLElement>(".app-showcase__viewport");
-    const figures = Array.from(container.querySelectorAll("figure"));
-
-    expect(viewport).not.toBeNull();
-    if (!viewport) return;
-
-    Object.defineProperty(viewport, "clientWidth", { configurable: true, value: 300 });
-    Object.defineProperty(viewport, "scrollLeft", { configurable: true, value: 1400, writable: true });
-    figures.forEach((figure, index) => {
-      Object.defineProperty(figure, "clientWidth", { configurable: true, value: 100 });
-      Object.defineProperty(figure, "offsetLeft", { configurable: true, value: index * 100 });
-    });
+    const viewport = setCarouselLayout(container);
+    viewport.scrollLeft = 1400;
 
     fireEvent.scroll(viewport);
 
     expect(screen.getByRole("button", { name: /^2 \/ 14:/ })).toHaveClass("is-active");
+  });
+
+  it("waits three seconds after a click and resumes from the user's latest slide", () => {
+    const { container } = renderShowcase();
+    setCarouselLayout(container);
+    act(() => {
+      intersectionCallback([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /^2 \/ 14:/ }));
+    act(() => vi.advanceTimersByTime(2000));
+    fireEvent.click(screen.getByRole("button", { name: /^5 \/ 14:/ }));
+    const callsAfterLatestClick = vi.mocked(HTMLElement.prototype.scrollTo).mock.calls.length;
+
+    act(() => vi.advanceTimersByTime(2999));
+    expect(HTMLElement.prototype.scrollTo).toHaveBeenCalledTimes(callsAfterLatestClick);
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(HTMLElement.prototype.scrollTo).toHaveBeenLastCalledWith({ left: 1800, behavior: "smooth" });
+  });
+
+  it("waits three seconds after manual scrolling and resumes from the centered slide", () => {
+    const { container } = renderShowcase();
+    const viewport = setCarouselLayout(container);
+    act(() => {
+      intersectionCallback([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+
+    fireEvent.wheel(viewport, { deltaX: 100 });
+    viewport.scrollLeft = 1400;
+    fireEvent.scroll(viewport);
+    act(() => vi.advanceTimersByTime(140));
+    const callsAfterManualScroll = vi.mocked(HTMLElement.prototype.scrollTo).mock.calls.length;
+
+    act(() => vi.advanceTimersByTime(2999));
+    expect(HTMLElement.prototype.scrollTo).toHaveBeenCalledTimes(callsAfterManualScroll);
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(HTMLElement.prototype.scrollTo).toHaveBeenLastCalledWith({ left: 1500, behavior: "smooth" });
   });
 });
