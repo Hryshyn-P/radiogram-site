@@ -136,4 +136,21 @@ describe("AppShowcase", () => {
     act(() => vi.advanceTimersByTime(1));
     expect(HTMLElement.prototype.scrollTo).toHaveBeenLastCalledWith({ left: 1500, behavior: "smooth" });
   });
+
+  it("rebases an outer loop copy without smooth-scrolling back through the carousel", () => {
+    const { container } = renderShowcase();
+    const viewport = setCarouselLayout(container);
+    const last = screen.getByRole("button", { name: /^14 \/ 14:/ });
+    const next = screen.getByRole("button", { name: "Next app screenshot" });
+
+    fireEvent.click(last);
+    fireEvent.click(next);
+    const callsBeforeRebase = vi.mocked(HTMLElement.prototype.scrollTo).mock.calls.length;
+
+    act(() => vi.advanceTimersByTime(650));
+
+    expect(HTMLElement.prototype.scrollTo).toHaveBeenCalledTimes(callsBeforeRebase);
+    expect(viewport.scrollLeft).toBe(1300);
+    expect(screen.getByRole("button", { name: /^1 \/ 14:/ })).toHaveClass("is-active");
+  });
 });

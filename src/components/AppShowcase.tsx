@@ -29,6 +29,8 @@ const AppShowcase = () => {
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const normalizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rebaseFrameRef = useRef<number | null>(null);
+  const skipPositionScrollRef = useRef(false);
   const manualScrollRef = useRef(false);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
   const draggedRef = useRef(false);
@@ -65,7 +67,30 @@ const AppShowcase = () => {
     viewport.scrollTo({ left: Math.max(0, target), behavior });
   }, []);
 
+  const jumpToPosition = useCallback((index: number) => {
+    const viewport = viewportRef.current;
+    const slide = slideRefs.current[index];
+    if (!viewport || !slide) return;
+    const target = slide.offsetLeft - (viewport.clientWidth - slide.clientWidth) / 2;
+    viewport.classList.add("is-rebasing");
+    viewport.style.scrollSnapType = "none";
+    void viewport.offsetWidth;
+    viewport.scrollLeft = Math.max(0, target);
+    if (rebaseFrameRef.current !== null) cancelAnimationFrame(rebaseFrameRef.current);
+    rebaseFrameRef.current = requestAnimationFrame(() => {
+      rebaseFrameRef.current = requestAnimationFrame(() => {
+        viewport.style.removeProperty("scroll-snap-type");
+        viewport.classList.remove("is-rebasing");
+        rebaseFrameRef.current = null;
+      });
+    });
+  }, []);
+
   useEffect(() => {
+    if (skipPositionScrollRef.current) {
+      skipPositionScrollRef.current = false;
+      return;
+    }
     const firstPosition = initialPositionRef.current;
     initialPositionRef.current = false;
     const behavior = firstPosition || reduceMotion ? "auto" : "smooth";
@@ -74,12 +99,13 @@ const AppShowcase = () => {
     if (position < middleStart || position >= middleStart * 2) {
       normalizeTimerRef.current = setTimeout(() => {
         const normalized = middleStart + modulo(position);
-        scrollToPosition(normalized, "auto");
+        skipPositionScrollRef.current = true;
+        jumpToPosition(normalized);
         setActivePosition(normalized);
         setPosition(normalized);
       }, reduceMotion ? 0 : 650);
     }
-  }, [position, reduceMotion, scrollToPosition]);
+  }, [jumpToPosition, position, reduceMotion, scrollToPosition]);
 
   useEffect(() => {
     if (interacting || reduceMotion || !inView) return;
@@ -99,6 +125,7 @@ const AppShowcase = () => {
   useEffect(() => () => {
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     if (normalizeTimerRef.current) clearTimeout(normalizeTimerRef.current);
+    if (rebaseFrameRef.current !== null) cancelAnimationFrame(rebaseFrameRef.current);
   }, []);
 
   const startAutoplayCooldown = () => {
