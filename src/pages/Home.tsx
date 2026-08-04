@@ -10,6 +10,8 @@ import { useSeo } from "@/lib/seo";
 import { facetPath } from "@/lib/slug";
 import type { CatalogFacet, PodcastShow, Station } from "@/types/catalog";
 import { useLanguage } from "@/context/LanguageContext";
+import AppShowcase from "@/components/AppShowcase";
+import AppTourVideo from "@/components/AppTourVideo";
 
 const Home = () => {
   const [stations, setStations] = useState<Station[]>([]);
@@ -59,6 +61,8 @@ const Home = () => {
         <div className="station-results station-results--grid">{stations.map((station) => <StationCard key={station.id} station={station} />)}</div>
       </section>
 
+      <AppShowcase />
+
       <section className="home-discovery">
         <div className="page-shell home-discovery__grid">
           <div><span className="eyebrow">{t("findFrequency")}</span><h2>{t("discoveryTitle")}</h2><p>{t("discoveryBody")}</p><Link className="primary-button" to="/radio"><Search /> {t("openFinder")}</Link></div>
@@ -70,6 +74,8 @@ const Home = () => {
         <div className="section-heading"><div><span className="eyebrow">{t("freshEpisodes")}</span><h2>{t("podcastsWorth")}</h2></div><Link to="/podcasts">{t("searchPodcasts")} <ArrowRight /></Link></div>
         <div className="podcast-grid">{podcasts.map((show) => <PodcastCard key={show.id} show={show} />)}</div>
       </section>
+
+      <AppTourVideo />
 
       <section className="page-shell home-app-cta">
         <div className="home-app-cta__icon"><Sparkles /></div>
