@@ -8,6 +8,7 @@ const podcastLimit = Math.max(0, Number(process.env.SEO_PODCAST_LIMIT || 0));
 const apiHost = "https://all.api.radio-browser.info";
 const podcastTerms = ["news", "technology", "history", "science", "comedy", "culture", "business", "music", "society", "education", "sports", "health"];
 const SITEMAP_CHUNK_SIZE = 5_000;
+const CORE_ROUTES = ["/", "/radio", "/podcasts", "/support", "/privacy", "/terms"];
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character]);
 const slugify = (value) => String(value).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72) || "radio";
@@ -150,7 +151,7 @@ const supportFaq = {
 
 const main = async () => {
   const template = await readFile(path.join(DIST, "index.html"), "utf8");
-  const routes = new Set(["/", "/radio", "/podcasts", "/support", "/privacy", "/terms"]);
+  const routes = new Set(CORE_ROUTES);
   let stations = [];
   let podcasts = [];
   let countries = [];
@@ -199,6 +200,8 @@ const main = async () => {
 
   const routeList = [...routes];
   const sitemapDate = new Date().toISOString().slice(0, 10);
+  const coreSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${CORE_ROUTES.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc></url>`).join("\n")}\n</urlset>\n`;
+  await writeFile(path.join(DIST, "sitemap-core.xml"), coreSitemap, "utf8");
   const sitemapChunks = Array.from({ length: Math.ceil(routeList.length / SITEMAP_CHUNK_SIZE) }, (_, index) => routeList.slice(index * SITEMAP_CHUNK_SIZE, (index + 1) * SITEMAP_CHUNK_SIZE));
   if (sitemapChunks.length === 1) {
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
