@@ -1,0 +1,28 @@
+# Radiogram
+
+> Radiogram is a worldwide live radio and podcast player for the web, iPhone, iPad, and Mac. It provides searchable radio stations, podcast discovery and playback, favorites, song recognition, native media controls, widgets, and Apple-platform integrations.
+
+Radiogram is developed by HP Games Lab. The public web catalog can be used without an account. The native app is available from Apple's App Store.
+
+## Primary pages
+
+- [Radiogram](https://radiogram-site.duckdns.org/): Product overview, feature tour, and App Store download.
+- [Live radio](https://radiogram-site.duckdns.org/radio): Search and browse live internet radio stations by name, country, genre, and popularity.
+- [Podcasts](https://radiogram-site.duckdns.org/podcasts): Search shows and listen to podcast episodes online.
+- [Support](https://radiogram-site.duckdns.org/support): Product help, contact information, ownership corrections, and frequently asked questions.
+
+## Policies
+
+- [Privacy policy](https://radiogram-site.duckdns.org/privacy): Privacy information for the website and native app.
+- [Terms of use](https://radiogram-site.duckdns.org/terms): Terms covering Radiogram services.
+
+## Official product links
+
+- [Radiogram on the App Store](https://apps.apple.com/app/id6772640690): Official iPhone, iPad, and Mac application.
+- [HP Games Lab on X](https://x.com/hpgameslab): Development and product updates.
+- [Radiogram on Product Hunt](https://www.producthunt.com/products/radiogram): Product directory profile.
+
+## Crawling
+
+- [Sitemap](https://radiogram-site.duckdns.org/sitemap.xml): Complete machine-readable index of static pages, radio stations, podcast shows, countries, and genres.
+- [Robots policy](https://radiogram-site.duckdns.org/robots.txt): Search and answer-engine crawler permissions.
