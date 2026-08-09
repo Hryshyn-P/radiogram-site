@@ -15,6 +15,14 @@ const stationRoute = (station) => `/radio/${slugify(station.name)}-${station.sta
 const podcastRoute = (show) => `/podcasts/${show.collectionId}/${slugify(show.collectionName)}`;
 const facetRoute = (kind, value) => `/radio/${kind}/${slugify(value)}~${Buffer.from(value, "utf8").toString("base64url")}`;
 
+const breadcrumbLd = (route, title) => {
+  const section = route.startsWith("/podcasts") ? "Podcasts" : route.startsWith("/radio") ? "Radio" : null;
+  const items = [{ "@type": "ListItem", position: 1, name: "Radiogram", item: `${SITE_URL}/` }];
+  if (section) items.push({ "@type": "ListItem", position: 2, name: section, item: `${SITE_URL}/${section.toLowerCase()}` });
+  if (route !== "/" && route !== `/${section?.toLowerCase()}`) items.push({ "@type": "ListItem", position: items.length + 1, name: title, item: `${SITE_URL}${route}` });
+  return { "@type": "BreadcrumbList", itemListElement: items };
+};
+
 const fetchJson = async (url) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30_000);
@@ -42,9 +50,16 @@ const withMeta = (template, { title, description, route, image, jsonLd, fallback
     .replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${escapeHtml(title)}">`)
     .replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${escapeHtml(description)}">`);
   if (image) {
-    html = html.replace("</head>", `<meta property="og:image" content="${escapeHtml(image)}"><meta name="twitter:image" content="${escapeHtml(image)}"></head>`);
+    html = html
+      .replace(/<meta property="og:image"[^>]*>/, `<meta property="og:image" content="${escapeHtml(image)}">`)
+      .replace(/<meta property="og:image:alt"[^>]*>/, `<meta property="og:image:alt" content="${escapeHtml(title)}">`)
+      .replace(/<meta name="twitter:image"[^>]*>/, `<meta name="twitter:image" content="${escapeHtml(image)}">`)
+      .replace(/<meta name="twitter:image:alt"[^>]*>/, `<meta name="twitter:image:alt" content="${escapeHtml(title)}">`);
   }
-  if (jsonLd) html = html.replace("</head>", `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, "\\u003c")}</script></head>`);
+  if (jsonLd) {
+    const graph = { "@context": "https://schema.org", "@graph": [{ ...jsonLd, "@context": undefined }, breadcrumbLd(route, title)] };
+    html = html.replace("</head>", `<script type="application/ld+json">${JSON.stringify(graph).replace(/</g, "\\u003c")}</script></head>`);
+  }
   return html.replace('<div id="root"></div>', `<div id="root">${fallback}</div>`);
 };
 
