@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import AppPlayer, { APP_STORE_URL } from "./AppPlayer";
 import ScrollToTopButton from "./ScrollToTopButton";
+import VisitorCount from "./VisitorCount";
 import { appLanguages, type AppLanguage, useLanguage } from "@/context/LanguageContext";
 
 export const SUPPORT_EMAIL = "hpgameslab@gmail.com";
@@ -30,7 +31,7 @@ const Layout = () => {
       <main className="site-main"><Outlet /></main>
       <footer className="site-footer">
         <div className="page-shell site-footer__grid"><div><Link to="/" className="brand"><span className="brand__mark"><Radio /></span><span>Radiogram</span></Link><p>{t("footerTagline")}</p></div><div><strong>{t("listen")}</strong><Link to="/radio">{t("liveRadio")}</Link><Link to="/podcasts">{t("podcasts")}</Link></div><div><strong>{t("helpLegal")}</strong><Link to="/support">{t("support")}</Link><Link to="/privacy">{t("privacy")}</Link><Link to="/terms">{t("terms")}</Link></div><div><strong>{t("getInTouch")}</strong><a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><a href="https://www.radio-browser.info/" target="_blank" rel="noreferrer">{t("radioData")}</a></div></div>
-        <div className="page-shell site-footer__bottom"><span>© {new Date().getFullYear()} Radiogram</span><span>{t("curiousEars")}</span></div>
+        <div className="page-shell site-footer__bottom"><span>© {new Date().getFullYear()} Radiogram <VisitorCount /></span><span>{t("curiousEars")}</span></div>
       </footer>
       <ScrollToTopButton />
       <AppPlayer />
