@@ -11,7 +11,7 @@ const Privacy = () => {
           <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
             Your privacy matters
           </h1>
-          <p className="mt-4 text-sm text-muted-foreground">Last updated: May 26, 2026</p>
+          <p className="mt-4 text-sm text-muted-foreground">Last updated: August 9, 2026</p>
         </div>
 
         <div className="space-y-8 rounded-2xl border border-border bg-gradient-card p-7 shadow-card md:p-10">
@@ -46,6 +46,14 @@ const Privacy = () => {
             destinations you choose to open, their own privacy practices may apply when
             you connect to their services. Radiogram does not control third-party
             privacy policies, content, or infrastructure.
+          </PolicyBlock>
+          <PolicyBlock title="Website Analytics">
+            The Radiogram website uses optional Google Analytics only after you
+            provide consent. Google Analytics may process online identifiers,
+            approximate location derived from your IP address, device and browser
+            information, page views, outbound clicks, and interaction events. You can
+            decline analytics from the consent notice and continue using the website.
+            Your choice is stored locally in your browser.
           </PolicyBlock>
           <PolicyBlock title="Purchases and Support">
             Radiogram may offer optional App Store purchases that support ongoing

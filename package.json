@@ -8,6 +8,7 @@
     "build": "vite build && node scripts/generate-seo.mjs",
     "build:seo": "SEO_STATION_LIMIT=20000 SEO_PODCAST_LIMIT=600 npm run build",
     "build:dev": "vite build --mode development",
+    "indexnow": "node scripts/notify-indexnow.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

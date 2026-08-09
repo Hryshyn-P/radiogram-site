@@ -13,6 +13,7 @@ import RadioCatalog from "./pages/RadioCatalog";
 import StationDetails from "./pages/StationDetails";
 import Support from "./pages/Support";
 import Terms from "./pages/Terms";
+import Analytics from "./components/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
     <TooltipProvider>
       <LanguageProvider>
         <BrowserRouter>
+          <Analytics />
           <PlayerProvider>
           <Routes>
             <Route element={<Layout />}>
