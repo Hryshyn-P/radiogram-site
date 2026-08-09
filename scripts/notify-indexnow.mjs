@@ -3,6 +3,8 @@ const key = process.env.INDEXNOW_KEY || "dc1ae425cbe4cd9786519029c9576912";
 const keyLocation = `${siteUrl}/${key}.txt`;
 const sitemapUrl = `${siteUrl}/sitemap.xml?deploy=${encodeURIComponent(process.env.GITHUB_SHA || Date.now())}`;
 const batchSize = 10_000;
+const verificationRetryDelayMs = 10_000;
+const verificationAttempts = 6;
 
 const fetchText = async (url) => {
   const response = await fetch(url, { headers: { Accept: "application/xml,text/xml" } });
@@ -33,15 +35,28 @@ const collectUrls = async (url, seen = new Set()) => {
 const urls = [...new Set(await collectUrls(sitemapUrl))].filter((url) => url.startsWith(`${siteUrl}/`));
 if (!urls.length) throw new Error("No site URLs found in sitemap");
 
+const submitBatch = async (urlList) => {
+  for (let attempt = 1; attempt <= verificationAttempts; attempt += 1) {
+    const response = await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({ host: new URL(siteUrl).host, key, keyLocation, urlList }),
+    });
+    const responseText = await response.text();
+    if (response.ok || response.status === 202) return response.status;
+
+    const verificationPending = response.status === 403 && responseText.includes("SiteVerificationNotCompleted");
+    if (!verificationPending || attempt === verificationAttempts) {
+      throw new Error(`IndexNow returned ${response.status}: ${responseText}`);
+    }
+
+    console.log(`IndexNow key verification is pending; retrying in ${verificationRetryDelayMs / 1000}s.`);
+    await new Promise((resolve) => setTimeout(resolve, verificationRetryDelayMs));
+  }
+};
+
 for (let index = 0; index < urls.length; index += batchSize) {
   const urlList = urls.slice(index, index + batchSize);
-  const response = await fetch("https://api.indexnow.org/indexnow", {
-    method: "POST",
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-    body: JSON.stringify({ host: new URL(siteUrl).host, key, keyLocation, urlList }),
-  });
-  if (!response.ok && response.status !== 202) {
-    throw new Error(`IndexNow returned ${response.status}: ${await response.text()}`);
-  }
-  console.log(`IndexNow accepted ${urlList.length} URLs (${response.status}).`);
+  const status = await submitBatch(urlList);
+  console.log(`IndexNow accepted ${urlList.length} URLs (${status}).`);
 }
