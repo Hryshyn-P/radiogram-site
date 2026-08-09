@@ -7,7 +7,7 @@ const stationLimit = Math.max(0, Number(process.env.SEO_STATION_LIMIT || 0));
 const podcastLimit = Math.max(0, Number(process.env.SEO_PODCAST_LIMIT || 0));
 const apiHost = "https://all.api.radio-browser.info";
 const podcastTerms = ["news", "technology", "history", "science", "comedy", "culture", "business", "music", "society", "education", "sports", "health"];
-const SITEMAP_CHUNK_SIZE = 45_000;
+const SITEMAP_CHUNK_SIZE = 5_000;
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character]);
 const slugify = (value) => String(value).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72) || "radio";
@@ -170,16 +170,17 @@ const main = async () => {
   }
 
   const routeList = [...routes];
+  const sitemapDate = new Date().toISOString().slice(0, 10);
   const sitemapChunks = Array.from({ length: Math.ceil(routeList.length / SITEMAP_CHUNK_SIZE) }, (_, index) => routeList.slice(index * SITEMAP_CHUNK_SIZE, (index + 1) * SITEMAP_CHUNK_SIZE));
   if (sitemapChunks.length === 1) {
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><lastmod>${sitemapDate}</lastmod><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
     await writeFile(path.join(DIST, "sitemap.xml"), sitemap, "utf8");
   } else {
     for (const [index, chunk] of sitemapChunks.entries()) {
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><lastmod>${sitemapDate}</lastmod><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
       await writeFile(path.join(DIST, `sitemap-${index + 1}.xml`), sitemap, "utf8");
     }
-    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapChunks.map((_, index) => `  <sitemap><loc>${SITE_URL}/sitemap-${index + 1}.xml</loc></sitemap>`).join("\n")}\n</sitemapindex>\n`;
+    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapChunks.map((_, index) => `  <sitemap><loc>${SITE_URL}/sitemap-${index + 1}.xml</loc><lastmod>${sitemapDate}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`;
     await writeFile(path.join(DIST, "sitemap.xml"), sitemapIndex, "utf8");
   }
   console.log(`Generated SEO: ${stations.length} stations, ${podcasts.length} podcasts, ${routes.size} sitemap URLs.`);
