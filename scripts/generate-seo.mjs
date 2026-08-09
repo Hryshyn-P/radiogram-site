@@ -57,7 +57,8 @@ const withMeta = (template, { title, description, route, image, jsonLd, fallback
       .replace(/<meta name="twitter:image:alt"[^>]*>/, `<meta name="twitter:image:alt" content="${escapeHtml(title)}">`);
   }
   if (jsonLd) {
-    const graph = { "@context": "https://schema.org", "@graph": [{ ...jsonLd, "@context": undefined }, breadcrumbLd(route, title)] };
+    const entities = (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((entity) => ({ ...entity, "@context": undefined }));
+    const graph = { "@context": "https://schema.org", "@graph": [...entities, breadcrumbLd(route, title)] };
     html = html.replace("</head>", `<script type="application/ld+json">${JSON.stringify(graph).replace(/</g, "\\u003c")}</script></head>`);
   }
   return html.replace('<div id="root"></div>', `<div id="root">${fallback}</div>`);
@@ -135,6 +136,18 @@ const shellPageData = (title, description, heading, type = "CollectionPage") => 
   fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Radiogram</p><h1 style="font-size:48px">${escapeHtml(heading)}</h1><p>${escapeHtml(description)}</p></main>`,
 });
 
+const supportFaq = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    ["How do I report a station issue?", "Email hpgameslab@gmail.com with the station name, stream URL if available, and a short description. We review every report."],
+    ["How can a station owner or rights holder request a correction or removal?", "Email hpgameslab@gmail.com with the station name, listing details, requested action, and information showing your relationship to the station or content."],
+    ["How do I restore purchases?", "Open Radiogram, go to Settings, and tap Restore Purchases. Make sure you are signed in with the same Apple ID used for the original purchase."],
+    ["Why is a station unavailable?", "Stations sometimes go offline or change their stream URL without notice. If a station stays down for more than a few hours, contact Radiogram support."],
+    ["How do I suggest a feature?", "Send your ideas to hpgameslab@gmail.com. Every email is read and product feedback is reviewed."],
+  ].map(([name, text]) => ({ "@type": "Question", name, acceptedAnswer: { "@type": "Answer", text } })),
+};
+
 const main = async () => {
   const template = await readFile(path.join(DIST, "index.html"), "utf8");
   const routes = new Set(["/", "/radio", "/podcasts", "/support", "/privacy", "/terms"]);
@@ -165,7 +178,7 @@ const main = async () => {
   const staticPages = [
     ["/radio", shellPageData("Live radio stations from around the world | Radiogram", "Explore live radio from around the world. Search and filter thousands of stations by country, genre, popularity, and name.", "Explore live radio")],
     ["/podcasts", shellPageData("Discover podcasts and episodes | Radiogram", "Search podcasts from the Apple Podcasts catalog, browse shows, and listen to episodes online free in Radiogram.", "Find your next listen")],
-    ["/support", shellPageData("Radiogram Support", "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features.", "Radiogram Support", "WebPage")],
+    ["/support", { ...shellPageData("Radiogram Support", "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features.", "Radiogram Support", "WebPage"), jsonLd: [{ "@context": "https://schema.org", "@type": "WebPage", name: "Radiogram Support", description: "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features." }, supportFaq] }],
     ["/privacy", shellPageData("Privacy Policy | Radiogram", "Read the Radiogram privacy policy for the website and Apple platform app.", "Privacy Policy", "WebPage")],
     ["/terms", shellPageData("Terms of Use | Radiogram", "Read the terms of use for Radiogram live radio, podcasts, and Apple platform app.", "Terms of Use", "WebPage")],
   ];
@@ -188,11 +201,11 @@ const main = async () => {
   const sitemapDate = new Date().toISOString().slice(0, 10);
   const sitemapChunks = Array.from({ length: Math.ceil(routeList.length / SITEMAP_CHUNK_SIZE) }, (_, index) => routeList.slice(index * SITEMAP_CHUNK_SIZE, (index + 1) * SITEMAP_CHUNK_SIZE));
   if (sitemapChunks.length === 1) {
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><lastmod>${sitemapDate}</lastmod><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
     await writeFile(path.join(DIST, "sitemap.xml"), sitemap, "utf8");
   } else {
     for (const [index, chunk] of sitemapChunks.entries()) {
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><lastmod>${sitemapDate}</lastmod><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
       await writeFile(path.join(DIST, `sitemap-${index + 1}.xml`), sitemap, "utf8");
     }
     const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapChunks.map((_, index) => `  <sitemap><loc>${SITE_URL}/sitemap-${index + 1}.xml</loc><lastmod>${sitemapDate}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`;
