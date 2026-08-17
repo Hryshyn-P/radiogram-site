@@ -81,7 +81,7 @@ export const searchPodcasts = async (term: string, country: string): Promise<Pod
   return shows;
 };
 
-export const lookupPodcast = async (id: number): Promise<{ show: PodcastShow | null; episodes: PodcastEpisode[] }> => {
+export const lookupPodcast = async (id: number, labels = { podcast: "Podcast", untitledEpisode: "Untitled episode" }): Promise<{ show: PodcastShow | null; episodes: PodcastEpisode[] }> => {
   const key = `podcast.${id}`;
   const cached = readCache<{ show: PodcastShow | null; episodes: PodcastEpisode[] }>(key, EPISODE_TTL);
   if (cached) return cached;
@@ -93,8 +93,8 @@ export const lookupPodcast = async (id: number): Promise<{ show: PodcastShow | n
     .map((item) => ({
       id: item.trackId!,
       showId: item.collectionId || id,
-      showName: item.collectionName || show?.name || "Podcast",
-      title: item.trackName || "Untitled episode",
+      showName: item.collectionName || show?.name || labels.podcast,
+      title: item.trackName || labels.untitledEpisode,
       description: item.description || item.shortDescription,
       audioUrl: item.episodeUrl,
       artworkUrl: item.artworkUrl600 || item.artworkUrl100 || show?.artworkUrl,

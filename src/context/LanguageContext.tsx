@@ -1,8 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { readStorage, writeStorage } from "@/lib/storage";
+import { detectLanguageByCountry } from "@/lib/languageDetection";
+import { extraTranslations } from "@/context/extraTranslations";
 
-export type AppLanguage = "en" | "ru" | "uk" | "pl" | "de";
+export type AppLanguage = "en" | "ru" | "uk" | "pl" | "de" | "zh-CN";
 
 export const appLanguages: Array<{ code: AppLanguage; label: string; short: string }> = [
   { code: "en", label: "English", short: "EN" },
@@ -10,9 +12,10 @@ export const appLanguages: Array<{ code: AppLanguage; label: string; short: stri
   { code: "uk", label: "Українська", short: "UK" },
   { code: "pl", label: "Polski", short: "PL" },
   { code: "de", label: "Deutsch", short: "DE" },
+  { code: "zh-CN", label: "简体中文", short: "中" },
 ];
 
-const translations: Record<AppLanguage, Record<string, string>> = {
+export const translations: Record<AppLanguage, Record<string, string>> = {
   en: {
     radio: "Radio", podcasts: "Podcasts", support: "Support", privacy: "Privacy Policy", terms: "Terms of Use", getApp: "Get Radiogram",
     listen: "Listen", liveRadio: "Live radio", helpLegal: "Help & legal", getInTouch: "Get in touch", radioData: "Radio data by Radio Browser", footerTagline: "The world’s radio and podcasts, on the web and every Apple screen.", curiousEars: "Made for curious ears.",
@@ -63,6 +66,16 @@ const translations: Record<AppLanguage, Record<string, string>> = {
     podcastCatalog: "Apple Podcasts-Katalog", findListen: "Finde dein nächstes Hörerlebnis.", podcastIntro: "Suche Sendungen und höre ganze Folgen, ohne Radiogram zu verlassen.", search: "Suchen", searchingPodcasts: "Podcasts werden gesucht…", couldntLoadPodcasts: "Podcasts konnten nicht geladen werden", searchResults: "Suchergebnisse", shows: "Sendungen", clearSearch: "Suche löschen",
     play: "Abspielen", pause: "Pause", volume: "Lautstärke", closePlayer: "Player schließen", podcastEpisode: "Podcast-Folge", openStation: "Öffnen", stationLogo: "Logo", stationWebsite: "Website",
   },
+  "zh-CN": {
+    radio: "广播", podcasts: "播客", support: "支持", privacy: "隐私政策", terms: "使用条款", getApp: "获取 Radiogram",
+    listen: "收听", liveRadio: "在线广播", helpLegal: "帮助与法律信息", getInTouch: "联系我们", radioData: "广播数据由 Radio Browser 提供", footerTagline: "世界各地的广播和播客，尽在网页与所有 Apple 屏幕。", curiousEars: "为好奇的耳朵而生。",
+    liveWorld: "全球直播", heroTitleA: "让整个世界", heroTitleB: "成为你的广播。", heroBody: "数千个直播电台和播客，可直接在网页播放。使用 Radiogram App 随身携带收藏、歌曲识别和收听历史。", startListening: "开始收听", getTheApp: "获取 App", builtFor: "适用于",
+    onAir: "正在播出", popularStations: "热门直播电台", exploreAll: "查看全部", findFrequency: "找到你的频率", discoveryTitle: "每一种状态，都有一个适合你的电台。", discoveryBody: "按国家、语言、类型及广播世界的每个角落搜索。从突发新闻到深度浩室，从公共广播到深夜氛围音乐。", openFinder: "打开电台搜索", liveStations: "个直播电台", surprise: "给我惊喜", spinWorld: "随机探索全球", freshEpisodes: "最新节目", podcastsWorth: "值得一听的播客", searchPodcasts: "搜索播客", fullExperience: "完整体验", remembered: "你的广播，为你记住。", appBody: "收藏电台、识别刚刚播放的歌曲、记录收听历史，并从锁定屏幕控制播放。", favorites: "收藏电台", recognition: "歌曲识别", nativeControls: "系统控制", download: "下载 Radiogram", showcaseEyebrow: "App 内功能", showcaseTitle: "看看 Radiogram 如何运作。", showcaseBody: "搜索每个电台、识别音乐、滑动切换广播、发现播客，并在 Apple 设备上控制收听。", previousSlide: "上一张 App 截图", nextSlide: "下一张 App 截图", tourEyebrow: "App 导览", tourTitle: "观看 Radiogram 实际运行。", tourBody: "快速了解电台搜索、音乐识别、手势、播客、小组件和播放控制。", tourPlay: "播放有声视频", tourDuration: "1:46，含声音", tourYoutube: "在 YouTube 观看",
+    worldwide: "全球电台", exploreRadio: "探索在线广播", catalogIntro: "探索世界各地的在线广播。按国家、类型、热度和名称搜索及筛选数千个电台。", searchStations: "搜索电台", filters: "筛选", tags: "标签", countries: "国家/地区", languages: "语言", clear: "清除", clearAll: "全部清除", resetFilters: "重置所有筛选", findTag: "查找标签", findCountry: "查找国家/地区", findLanguage: "查找语言", all: "全部", chooseThree: "最多选择 3 项", chooseOne: "选择一项", fromDirectory: "来自目录", noTags: "没有符合搜索的标签。", noCountries: "没有符合搜索的国家/地区。", noLanguages: "没有符合搜索的语言。", showMoreTags: "显示更多标签", remaining: "剩余", featured: "精选", popularNow: "当前热门", name: "名称", loaded: "个电台已加载", tuning: "正在调频…", lostSignal: "信号已丢失", catalogError: "电台目录暂时不可用，请稍后重试。", tryAgain: "重试", noStations: "未找到电台", broaderSearch: "请尝试更宽泛的搜索或清除一项筛选。", showAll: "显示所有电台", loadMore: "加载更多电台", resultsFor: "搜索结果", radioIn: "广播地区：", browseCountry: "按国家/地区浏览", browseGenre: "按类型浏览", query: "搜索",
+    backToTop: "返回顶部", interfaceLanguage: "界面语言", toggleMenu: "切换菜单", sortStations: "电台排序", displayMode: "显示方式", gridView: "网格视图", listView: "列表视图", activeFilters: "已启用的筛选", browseCategories: "浏览广播分类",
+    podcastCatalog: "Apple Podcasts 目录", findListen: "找到下一档想听的节目。", podcastIntro: "搜索节目并在 Radiogram 中直接播放完整播客单集。", search: "搜索", searchingPodcasts: "正在搜索播客…", couldntLoadPodcasts: "无法加载播客", searchResults: "搜索结果", shows: "个节目", clearSearch: "清除搜索",
+    play: "播放", pause: "暂停", volume: "音量", closePlayer: "关闭播放器", podcastEpisode: "播客单集", openStation: "打开", stationLogo: "台标", stationWebsite: "网站",
+  },
 };
 
 type LanguageContextValue = { language: AppLanguage; setLanguage: (language: AppLanguage) => void; t: (key: string) => string; locale: string };
@@ -72,12 +85,19 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguageState] = useState<AppLanguage>(() => {
     const stored = readStorage<AppLanguage | null>("app.language", null);
     if (stored && appLanguages.some((item) => item.code === stored)) return stored;
-    const browserLanguage = navigator.language.split("-")[0] as AppLanguage;
-    return appLanguages.some((item) => item.code === browserLanguage) ? browserLanguage : "en";
+    return "en";
   });
   const setLanguage = (next: AppLanguage) => { setLanguageState(next); writeStorage("app.language", next); };
+  useEffect(() => {
+    const stored = readStorage<AppLanguage | null>("app.language", null);
+    if (stored && appLanguages.some((item) => item.code === stored)) return;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 3_000);
+    detectLanguageByCountry(controller.signal).then(setLanguageState);
+    return () => { window.clearTimeout(timeout); controller.abort(); };
+  }, []);
   useEffect(() => { document.documentElement.lang = language; }, [language]);
-  const value = useMemo(() => ({ language, setLanguage, t: (key: string) => translations[language][key] || translations.en[key] || key, locale: language }), [language]);
+  const value = useMemo(() => ({ language, setLanguage, t: (key: string) => extraTranslations[language][key] || translations[language][key] || extraTranslations.en[key] || translations.en[key] || key, locale: language }), [language]);
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
 

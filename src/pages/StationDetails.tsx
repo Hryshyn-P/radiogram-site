@@ -11,6 +11,7 @@ import { shareOrCopy, stationShareData } from "@/lib/share";
 import { stationPath } from "@/lib/slug";
 import { useSeo } from "@/lib/seo";
 import type { Station } from "@/types/catalog";
+import { useLanguage } from "@/context/LanguageContext";
 
 const UUID_PATTERN = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
 
@@ -23,12 +24,13 @@ const StationDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { current, isPlaying, isLoading, play, toggle } = usePlayer();
+  const { t } = useLanguage();
 
   useSeo({
-    title: station ? `${station.name} live — listen online | Radiogram` : "Live radio station | Radiogram",
+    title: station ? `${station.name} — ${t("listenOnline")} | Radiogram` : t("stationSeoTitle"),
     description: station
-      ? `Listen to ${station.name} live from ${station.country}. ${[station.language, station.codec, station.bitrate ? `${station.bitrate} kbps` : ""].filter(Boolean).join(", ")}. Free online radio in Radiogram.`
-      : "Listen to this live internet radio station free in Radiogram.",
+      ? `${t("listenTo")} ${station.name} — ${t("liveFrom")} ${station.country}. ${[station.language, station.codec, station.bitrate ? `${station.bitrate} kbps` : ""].filter(Boolean).join(", ")}. ${t("freeOnlineRadio")}`
+      : t("stationSeoDescription"),
     path: location.pathname,
     image: station?.imageUrl,
     type: "music.radio_station",
@@ -51,8 +53,8 @@ const StationDetails = () => {
     return () => { cancelled = true; };
   }, [uuid]);
 
-  if (loading) return <div className="loading-state page-shell"><LoaderCircle className="spin" /><p>Finding the station…</p></div>;
-  if (error || !station) return <div className="empty-state page-shell"><Radio /><h1>Station not found</h1><p>This station may have moved or stopped broadcasting.</p><Link className="primary-button" to="/radio">Explore live radio</Link></div>;
+  if (loading) return <div className="loading-state page-shell"><LoaderCircle className="spin" /><p>{t("findingStation")}</p></div>;
+  if (error || !station) return <div className="empty-state page-shell"><Radio /><h1>{t("stationNotFound")}</h1><p>{t("stationUnavailableBody")}</p><Link className="primary-button" to="/radio">{t("exploreRadio")}</Link></div>;
 
   const isCurrent = current?.id === station.id;
   const handlePlay = () => {
@@ -70,32 +72,32 @@ const StationDetails = () => {
 
   return (
     <div className="station-detail page-shell">
-      <Link to="/radio" className="back-link"><ArrowLeft /> All stations</Link>
+      <Link to="/radio" className="back-link"><ArrowLeft /> {t("allStations")}</Link>
       <section className="station-hero">
         <div className="station-hero__visual">
           <span className="station-hero__vinyl" aria-hidden="true" />
-          <Artwork src={station.imageUrl} alt={`${station.name} logo`} className="station-hero__art" fallbackId={station.id} fallbackTitle={station.name} />
+          <Artwork src={station.imageUrl} alt={`${station.name} ${t("stationLogo")}`} className="station-hero__art" fallbackId={station.id} fallbackTitle={station.name} />
         </div>
         <div className="station-hero__copy">
-          <span className="eyebrow">Live from {station.country}</span>
+          <span className="eyebrow">{t("liveFrom")} {station.country}</span>
           <h1>{station.name}</h1>
-          <p>{[station.language, station.codec, station.bitrate ? `${station.bitrate} kbps` : "Live stream"].filter(Boolean).join(" · ")}</p>
+          <p>{[station.language, station.codec, station.bitrate ? `${station.bitrate} kbps` : t("liveStream")].filter(Boolean).join(" · ")}</p>
           <div className="station-hero__tags">{station.tags.slice(0, 5).map((tag) => <Link key={tag} to={`/radio?tag=${encodeURIComponent(tag)}`}>{tag}</Link>)}</div>
           <div className="station-hero__actions">
-            <button className="primary-button primary-button--large" onClick={handlePlay}>{isCurrent && isLoading ? <PlaybackLoader /> : isCurrent && isPlaying ? <Pause /> : <Play />} {isCurrent && isPlaying ? "Pause" : "Listen live"}</button>
-            <button className="secondary-button" onClick={share}><Share2 /> Share</button>
-            {station.homepage && <a className="secondary-button" href={station.homepage} target="_blank" rel="noreferrer"><ExternalLink /> Website</a>}
+            <button className="primary-button primary-button--large" onClick={handlePlay}>{isCurrent && isLoading ? <PlaybackLoader /> : isCurrent && isPlaying ? <Pause /> : <Play />} {isCurrent && isPlaying ? t("pause") : t("listenLive")}</button>
+            <button className="secondary-button" onClick={share}><Share2 /> {t("share")}</button>
+            {station.homepage && <a className="secondary-button" href={station.homepage} target="_blank" rel="noreferrer"><ExternalLink /> {t("website")}</a>}
           </div>
         </div>
       </section>
 
       <section className="app-upsell">
         <div className="app-upsell__icon"><Headphones /></div>
-        <div><span className="eyebrow">Take it with you</span><h2>More listening in the Radiogram app.</h2><p>Save favorite stations, recognize songs, keep your history, and listen with native Lock Screen controls on iPhone, iPad, and Mac.</p></div>
-        <a className="primary-button download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> Download</a>
+        <div><span className="eyebrow">{t("takeItWithYou")}</span><h2>{t("moreListeningApp")}</h2><p>{t("stationAppBody")}</p></div>
+        <a className="primary-button download-cta" href={APP_STORE_URL} target="_blank" rel="noreferrer"><Download /> {t("download")}</a>
       </section>
 
-      {related.length > 0 && <section className="related-section"><div className="section-heading"><div><span className="eyebrow">Keep exploring</span><h2>More from {station.country}</h2></div><Link to={`/radio?country=${encodeURIComponent(station.country)}`}>See all</Link></div><div className="station-results station-results--grid">{related.map((item) => <StationCard key={item.id} station={item} />)}</div></section>}
+      {related.length > 0 && <section className="related-section"><div className="section-heading"><div><span className="eyebrow">{t("keepExploring")}</span><h2>{t("moreFrom")} {station.country}</h2></div><Link to={`/radio?country=${encodeURIComponent(station.country)}`}>{t("seeAll")}</Link></div><div className="station-results station-results--grid">{related.map((item) => <StationCard key={item.id} station={item} />)}</div></section>}
     </div>
   );
 };

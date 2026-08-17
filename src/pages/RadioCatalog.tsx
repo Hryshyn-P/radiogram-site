@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Globe2, Grid2X2, Languages, List, LoaderCircle, Radio, RotateCw, Search, SlidersHorizontal, Tag, X } from "lucide-react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import StationCard from "@/components/StationCard";
@@ -37,7 +37,7 @@ const fetchFilteredStations = async ({
 const RadioCatalog = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { locale, t } = useLanguage();
+  const { language, locale, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const routeCountry = decodeFacetParam(params.country);
   const routeTag = decodeFacetParam(params.tag);
@@ -62,17 +62,38 @@ const RadioCatalog = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(Boolean(selectedCountries.length || selectedTags.length || selectedLanguages.length));
+  const previousLanguage = useRef<typeof language | null>(null);
+  const preChineseState = useRef<{ countries: string[]; filtersOpen: boolean } | null>(null);
+
+  useEffect(() => {
+    const enteringChinese = language === "zh-CN" && previousLanguage.current !== "zh-CN";
+    const leavingChinese = language !== "zh-CN" && previousLanguage.current === "zh-CN";
+
+    if (enteringChinese) {
+      preChineseState.current = { countries: selectedCountries, filtersOpen };
+      if (!routeCountry && !searchParams.get("country")) {
+        setSelectedCountries(["China"]);
+        setFiltersOpen(true);
+      }
+    } else if (leavingChinese && preChineseState.current) {
+      setSelectedCountries(preChineseState.current.countries);
+      setFiltersOpen(preChineseState.current.filtersOpen);
+      preChineseState.current = null;
+    }
+
+    previousLanguage.current = language;
+  }, [filtersOpen, language, routeCountry, searchParams, selectedCountries]);
 
   const title = routeCountry
-    ? `Radio stations in ${routeCountry} — listen live | Radiogram`
+    ? `${t("radioStationsIn")} ${routeCountry} — ${t("listenLive")} | Radiogram`
     : routeTag
-      ? `${routeTag} radio stations — listen live | Radiogram`
-      : "Live radio stations from around the world | Radiogram";
+      ? `${routeTag} ${t("radioStations")} — ${t("listenLive")} | Radiogram`
+      : t("radioSeoTitle");
   const description = routeCountry
-    ? `Listen to live internet radio stations from ${routeCountry}. Browse free streams by popularity, name, genre, and language in Radiogram.`
+    ? `${t("listenStationsFrom")} ${routeCountry}. ${t("browseStreams")}`
     : routeTag
-      ? `Listen to popular ${routeTag} radio stations online for free. Discover live worldwide streams in Radiogram.`
-      : "Explore live radio from around the world. Search and filter thousands of stations by country, genre, popularity, and name.";
+      ? `${t("listenPopular")} ${routeTag} ${t("radioOnlineFree")} ${t("discoverStreams")}`
+      : t("catalogIntro");
   useSeo({ title, description, path: window.location.pathname });
 
   useEffect(() => {

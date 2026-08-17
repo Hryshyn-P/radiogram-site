@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useLanguage } from "@/context/LanguageContext";
 
 const MEASUREMENT_ID = "G-RM0CLWH4WJ";
 const CONSENT_KEY = "radiogram-analytics-consent";
@@ -29,6 +30,7 @@ const enableAnalytics = () => {
 
 const Analytics = () => {
   const location = useLocation();
+  const { t } = useLanguage();
   const [consent, setConsent] = useState<Consent>(() => {
     const stored = localStorage.getItem(CONSENT_KEY);
     return stored === "granted" || stored === "denied" ? stored : null;
@@ -58,16 +60,16 @@ const Analytics = () => {
 
   return (
     <aside
-      aria-label="Analytics consent"
+      aria-label={t("analyticsConsent")}
       className="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-2xl rounded-2xl border border-border bg-background/95 p-5 shadow-2xl backdrop-blur"
     >
       <p className="text-sm leading-relaxed text-muted-foreground">
-        Radiogram uses optional Google Analytics to understand website traffic and improve the experience. No analytics loads unless you accept. See our{" "}
-        <Link className="text-primary underline underline-offset-4" to="/privacy">Privacy Policy</Link>.
+        {t("analyticsBody")} {t("seeOur")} {" "}
+        <Link className="text-primary underline underline-offset-4" to="/privacy">{t("privacy")}</Link>.
       </p>
       <div className="mt-4 flex flex-wrap justify-end gap-3">
-        <button className="rounded-lg border border-border px-4 py-2 text-sm font-medium" onClick={() => choose("denied")}>Decline</button>
-        <button className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground" onClick={() => choose("granted")}>Accept analytics</button>
+        <button className="rounded-lg border border-border px-4 py-2 text-sm font-medium" onClick={() => choose("denied")}>{t("decline")}</button>
+        <button className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground" onClick={() => choose("granted")}>{t("acceptAnalytics")}</button>
       </div>
     </aside>
   );

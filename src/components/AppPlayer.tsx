@@ -13,7 +13,7 @@ const AppPlayer = () => {
   if (!current) return null;
 
   return (
-    <aside className="app-player" aria-label="Now playing">
+    <aside className="app-player" aria-label={t("nowPlaying")}>
       <div className="app-player__inner">
         <Link to={current.pageUrl} className="app-player__track">
           <Artwork src={current.artworkUrl} alt="" className="app-player__art" fallbackId={current.kind === "station" ? current.id : undefined} fallbackTitle={current.kind === "station" ? current.title : undefined} />

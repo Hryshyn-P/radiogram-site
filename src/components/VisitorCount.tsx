@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const VISITOR_COUNT_URL =
   "https://script.google.com/macros/s/AKfycbzAGLypF99XyzKfsulVgKb5GDKe5AvU-KJklYs2y1mis5blTRmxqqpeL9irusG4_Jil/exec";
 
 const VisitorCount = () => {
   const [count, setCount] = useState<number | null>(null);
+  const { locale, t } = useLanguage();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -35,10 +37,10 @@ const VisitorCount = () => {
   return (
     <span
       className="visitor-count"
-      aria-label={`${count.toLocaleString()} unique visitors recorded since analytics was enabled`}
-      title="Unique visitors recorded since analytics was enabled"
+      aria-label={`${count.toLocaleString(locale)} ${t("uniqueVisitors")}`}
+      title={t("uniqueVisitors")}
     >
-      · {count.toLocaleString()}
+      · {count.toLocaleString(locale)}
     </span>
   );
 };

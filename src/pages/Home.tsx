@@ -19,8 +19,8 @@ const Home = () => {
   const [featuredTags, setFeaturedTags] = useState<CatalogFacet[]>([]);
   const { locale, t } = useLanguage();
   useSeo({
-    title: "Radiogram — live radio and podcasts from around the world",
-    description: "Listen to thousands of live radio stations and discover podcasts online. Get Radiogram for iPhone, iPad, and Mac for favorites, song recognition, and native playback.",
+    title: t("homeSeoTitle"),
+    description: t("homeSeoDescription"),
     path: "/",
   });
 
@@ -49,9 +49,9 @@ const Home = () => {
             <div className="radio-orbit__ring radio-orbit__ring--one" />
             <div className="radio-orbit__ring radio-orbit__ring--two" />
             <div className="radio-orbit__core"><Radio /></div>
-            <span className="radio-orbit__label radio-orbit__label--one">Tokyo · Jazz</span>
-            <span className="radio-orbit__label radio-orbit__label--two">London · News</span>
-            <span className="radio-orbit__label radio-orbit__label--three">São Paulo · Soul</span>
+            <span className="radio-orbit__label radio-orbit__label--one">Tokyo · {t("jazz")}</span>
+            <span className="radio-orbit__label radio-orbit__label--two">London · {t("news")}</span>
+            <span className="radio-orbit__label radio-orbit__label--three">São Paulo · {t("soul")}</span>
           </div>
         </div>
       </section>

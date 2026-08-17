@@ -2,6 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Bug, Briefcase, Radio, Mail, Clock, Heart, Coffee, Twitter } from "lucide-react";
 import { SUPPORT_EMAIL } from "@/components/Layout";
+import { useLanguage } from "@/context/LanguageContext";
 
 const IndieHackersIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
@@ -20,65 +21,15 @@ const IndieHackersIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const faqs = [
-  {
-    q: "How do I report a station issue?",
-    a: `Email us at ${SUPPORT_EMAIL} with the station name, stream URL if available, and a short description. We review every report.`,
-  },
-  {
-    q: "How can a station owner or rights holder request a correction or removal?",
-    a: `Email ${SUPPORT_EMAIL} with the station name, listing details, requested action, and information showing your relationship to the station or content. We will review the request and respond by email.`,
-  },
-  {
-    q: "How do I restore purchases?",
-    a: "Open Radiogram, go to Settings, and tap 'Restore Purchases'. Make sure you are signed in with the same Apple ID used for the original purchase.",
-  },
-  {
-    q: "Why is a station unavailable?",
-    a: "Stations sometimes go offline or change their stream URL without notice. If a station stays down for more than a few hours, please let us know and we'll update it.",
-  },
-  {
-    q: "How do I suggest a feature?",
-    a: `We love feedback. Send your ideas to ${SUPPORT_EMAIL} — every email is read by a human, and many features come directly from listener suggestions.`,
-  },
-];
-
-const supportLinks = [
-  {
-    name: "Patreon",
-    title: "Support on Patreon",
-    ariaLabel: "Support HP Games Lab on Patreon",
-    description: "Support HP Games Lab with a recurring membership.",
-    href: "https://www.patreon.com/c/HPGamesLab",
-    icon: Heart,
-  },
-  {
-    name: "Ko-fi",
-    title: "Support on Ko-fi",
-    ariaLabel: "Support HP Games Lab on Ko-fi",
-    description: "Make a one-time donation to support Radiogram development.",
-    href: "https://ko-fi.com/hpgameslab",
-    icon: Coffee,
-  },
-  {
-    name: "Twitter",
-    title: "Follow on Twitter",
-    ariaLabel: "Follow @hpgameslab on Twitter",
-    description: "Follow @hpgameslab for Radiogram news and development updates.",
-    href: "https://x.com/hpgameslab",
-    icon: Twitter,
-  },
-  {
-    name: "Indie Hackers",
-    title: "Follow on Indie Hackers",
-    ariaLabel: "Follow hpgameslab on Indie Hackers",
-    description: "Follow the HP Games Lab journey and behind-the-scenes progress.",
-    href: "https://www.indiehackers.com/hpgameslab",
-    icon: IndieHackersIcon,
-  },
-];
-
 const Support = () => {
+  const { t } = useLanguage();
+  const faqs = [1, 2, 3, 4, 5].map((number) => ({ q: t(`faq${number}Q`), a: t(`faq${number}A`).replace("{email}", SUPPORT_EMAIL) }));
+  const supportLinks = [
+    { name: "Patreon", title: t("supportPatreon"), ariaLabel: t("supportPatreonAria"), description: t("supportPatreonBody"), href: "https://www.patreon.com/c/HPGamesLab", icon: Heart },
+    { name: "Ko-fi", title: t("supportKofi"), ariaLabel: t("supportKofiAria"), description: t("supportKofiBody"), href: "https://ko-fi.com/hpgameslab", icon: Coffee },
+    { name: "Twitter", title: t("followTwitter"), ariaLabel: t("followTwitterAria"), description: t("followTwitterBody"), href: "https://x.com/hpgameslab", icon: Twitter },
+    { name: "Indie Hackers", title: t("followIndieHackers"), ariaLabel: t("followIndieHackersAria"), description: t("followIndieHackersBody"), href: "https://www.indiehackers.com/hpgameslab", icon: IndieHackersIcon },
+  ];
   return (
     <>
       {/* Hero */}
@@ -90,13 +41,13 @@ const Support = () => {
               <Radio className="h-8 w-8 text-primary-foreground" strokeWidth={2.25} />
             </div>
             <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              Support Center
+              {t("supportCenter")}
             </p>
             <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
-              Radiogram <span className="text-primary">Support</span>
+              Radiogram <span className="text-primary">{t("support")}</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl">
-              Worldwide internet radio for iPhone, iPad, and Mac.
+              {t("supportHeroBody")}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button
@@ -105,7 +56,7 @@ const Support = () => {
                 className="rounded-full bg-gradient-accent text-primary-foreground shadow-glow hover:opacity-95"
               >
                 <a href={`mailto:${SUPPORT_EMAIL}`}>
-                  <Mail className="mr-2 h-4 w-4" /> Contact Support
+                  <Mail className="mr-2 h-4 w-4" /> {t("contactSupport")}
                 </a>
               </Button>
               <Button
@@ -114,7 +65,7 @@ const Support = () => {
                 variant="outline"
                 className="rounded-full border-border bg-card/40 backdrop-blur hover:bg-card"
               >
-                <a href="#faq">Browse FAQ</a>
+                <a href="#faq">{t("browseFaq")}</a>
               </Button>
             </div>
           </div>
@@ -125,37 +76,35 @@ const Support = () => {
       <section className="container mx-auto px-6 py-20 md:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-            Need help or found a bug?
+            {t("needHelp")}
           </h2>
           <p className="mt-5 text-base text-muted-foreground md:text-lg">
-            We're a small independent team and we read every message. Pick the best
-            channel below — we usually reply within{" "}
-            <span className="text-foreground">1–3 days</span>.
+            {t("smallTeamBody")} <span className="text-foreground">{t("oneToThreeDays")}</span>.
           </p>
         </div>
 
         <div className="mx-auto mt-14 grid max-w-4xl gap-5 md:grid-cols-2">
           <ContactCard
             icon={<Bug className="h-5 w-5" />}
-            label="Bug Reports"
-            title="Something not working?"
-            description="Send us details about the issue, your device model, OS version, and what you were doing so we can reproduce and fix it fast."
+            label={t("bugReports")}
+            title={t("somethingWrong")}
+            description={t("bugReportBody")}
             email={SUPPORT_EMAIL}
-            subject="Radiogram — Bug Report"
+            subject={t("bugEmailSubject")}
           />
           <ContactCard
             icon={<Briefcase className="h-5 w-5" />}
-            label="Business Inquiries"
-            title="Partnerships & press"
-            description="For collaborations, licensing, station partnerships, and media requests, get in touch via email."
+            label={t("businessInquiries")}
+            title={t("partnershipsPress")}
+            description={t("businessBody")}
             email={SUPPORT_EMAIL}
-            subject="Radiogram — Business Inquiry"
+            subject={t("businessEmailSubject")}
           />
         </div>
 
         <div className="mx-auto mt-8 flex max-w-4xl items-center justify-center gap-2 text-sm text-muted-foreground">
           <Clock className="h-4 w-4 text-primary" />
-          Average response time: 1–3 business days
+          {t("averageResponse")}
         </div>
       </section>
 
@@ -164,14 +113,13 @@ const Support = () => {
         <div className="container mx-auto px-6 py-20 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">
-              Support development
+              {t("supportDevelopment")}
             </p>
             <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-              Help us keep Radiogram growing
+              {t("keepGrowing")}
             </h2>
             <p className="mt-5 text-base text-muted-foreground md:text-lg">
-              Radiogram is built by a small independent team. If you enjoy the app, you can
-              support its development or follow HP Games Lab for updates.
+              {t("supportDevelopmentBody")}
             </p>
           </div>
 
@@ -203,9 +151,9 @@ const Support = () => {
         <div className="container mx-auto px-6 py-20 md:py-24">
           <div className="mx-auto max-w-3xl">
             <div className="mb-12 text-center">
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">FAQ</p>
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-primary">{t("faqLabel")}</p>
               <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-                Frequently asked questions
+                {t("frequentlyAsked")}
               </h2>
             </div>
 

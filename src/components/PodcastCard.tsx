@@ -3,16 +3,20 @@ import { Link } from "react-router-dom";
 import { podcastPath } from "@/lib/slug";
 import type { PodcastShow } from "@/types/catalog";
 import { Artwork } from "./Artwork";
+import { useLanguage } from "@/context/LanguageContext";
 
-const PodcastCard = ({ show }: { show: PodcastShow }) => (
+const PodcastCard = ({ show }: { show: PodcastShow }) => {
+  const { t } = useLanguage();
+  return (
   <Link to={podcastPath(show.name, show.id)} className="podcast-card">
-    <Artwork src={show.artworkUrl} alt={`${show.name} cover`} className="podcast-card__art" />
+    <Artwork src={show.artworkUrl} alt={`${show.name} ${t("podcastCover")}`} className="podcast-card__art" />
     <span>
       <strong>{show.name}</strong>
-      <small>{show.artistName || show.genres[0] || "Podcast"}</small>
+      <small>{show.artistName || show.genres[0] || t("podcast")}</small>
     </span>
     <ChevronRight />
   </Link>
-);
+  );
+};
 
 export default PodcastCard;

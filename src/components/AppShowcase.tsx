@@ -3,20 +3,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const slides = [
-  { src: "/app-showcase/01-station-search.webp", title: "Find your station" },
-  { src: "/app-showcase/02-smart-search.webp", title: "Search every match" },
-  { src: "/app-showcase/03-song-recognition.webp", title: "Identify any track" },
-  { src: "/app-showcase/04-station-swipe.webp", title: "Swipe between stations" },
-  { src: "/app-showcase/05-player-swipe.webp", title: "Dismiss the player naturally" },
-  { src: "/app-showcase/06-podcasts.webp", title: "Discover podcasts" },
-  { src: "/app-showcase/07-favorites.webp", title: "Keep every favorite" },
-  { src: "/app-showcase/08-layouts.webp", title: "Choose your layout" },
-  { src: "/app-showcase/09-random-station.webp", title: "Let chance choose" },
-  { src: "/app-showcase/10-lock-screen.webp", title: "Control the Lock Screen" },
-  { src: "/app-showcase/11-control-center.webp", title: "Launch from Control Center" },
-  { src: "/app-showcase/12-widgets.webp", title: "Pick your widget" },
-  { src: "/app-showcase/13-quick-actions.webp", title: "Use quick actions" },
-  { src: "/app-showcase/14-languages.webp", title: "Listen in your language" },
+  { src: "/app-showcase/01-station-search.webp", titleKey: "slide01" },
+  { src: "/app-showcase/02-smart-search.webp", titleKey: "slide02" },
+  { src: "/app-showcase/03-song-recognition.webp", titleKey: "slide03" },
+  { src: "/app-showcase/04-station-swipe.webp", titleKey: "slide04" },
+  { src: "/app-showcase/05-player-swipe.webp", titleKey: "slide05" },
+  { src: "/app-showcase/06-podcasts.webp", titleKey: "slide06" },
+  { src: "/app-showcase/07-favorites.webp", titleKey: "slide07" },
+  { src: "/app-showcase/08-layouts.webp", titleKey: "slide08" },
+  { src: "/app-showcase/09-random-station.webp", titleKey: "slide09" },
+  { src: "/app-showcase/10-lock-screen.webp", titleKey: "slide10" },
+  { src: "/app-showcase/11-control-center.webp", titleKey: "slide11" },
+  { src: "/app-showcase/12-widgets.webp", titleKey: "slide12" },
+  { src: "/app-showcase/13-quick-actions.webp", titleKey: "slide13" },
+  { src: "/app-showcase/14-languages.webp", titleKey: "slide14" },
 ];
 const loopSlides = Array.from({ length: 3 }, (_, copy) => slides.map((slide, index) => ({ ...slide, copy, index }))).flat();
 const middleStart = slides.length;
@@ -261,7 +261,7 @@ const AppShowcase = () => {
               role={accessible ? "button" : undefined}
               tabIndex={accessible ? 0 : -1}
               aria-roledescription={accessible ? "slide" : undefined}
-              aria-label={accessible ? `${slide.index + 1} / ${slides.length}: ${slide.title}` : undefined}
+              aria-label={accessible ? `${slide.index + 1} / ${slides.length}: ${t(slide.titleKey)}` : undefined}
               aria-hidden={accessible ? undefined : true}
               onClick={() => {
                 if (draggedRef.current) { draggedRef.current = false; return; }
@@ -271,8 +271,8 @@ const AppShowcase = () => {
                 if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activatePosition(physicalIndex); }
               } : undefined}
             >
-              <img src={slide.src} alt={accessible ? slide.title : ""} width="640" height="1388" loading="lazy" decoding="async" />
-              <figcaption><span>{String(slide.index + 1).padStart(2, "0")}</span><strong>{slide.title}</strong></figcaption>
+              <img src={slide.src} alt={accessible ? t(slide.titleKey) : ""} width="640" height="1388" loading="lazy" decoding="async" />
+              <figcaption><span>{String(slide.index + 1).padStart(2, "0")}</span><strong>{t(slide.titleKey)}</strong></figcaption>
             </figure>
           ); })}
         </div>

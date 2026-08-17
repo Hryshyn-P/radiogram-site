@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { Playable } from "@/types/catalog";
 import { readStorage, writeStorage } from "@/lib/storage";
+import { useLanguage } from "@/context/LanguageContext";
 
 type PlayerContextValue = {
   current: Playable | null;
@@ -17,6 +18,7 @@ type PlayerContextValue = {
 const PlayerContext = createContext<PlayerContextValue | null>(null);
 
 export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useLanguage();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [current, setCurrent] = useState<Playable | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -34,7 +36,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     const onError = () => {
       setIsPlaying(false);
       setIsLoading(false);
-      setError("This stream could not be played in the browser. Try another station or open it in Radiogram.");
+      setError(t("streamPlaybackError"));
     };
     audio.addEventListener("playing", onPlaying);
     audio.addEventListener("waiting", onWaiting);
@@ -51,7 +53,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       audio.removeEventListener("ended", onPause);
       audio.removeEventListener("error", onError);
     };
-  }, []);
+  }, [t]);
 
   const play = useCallback((item: Playable) => {
     const audio = audioRef.current!;
@@ -62,7 +64,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     void audio.play().catch(() => {
       setIsLoading(false);
-      setError("Your browser blocked playback. Press play once more to start listening.");
+      setError(t("playbackBlocked"));
     });
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -71,18 +73,18 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         artwork: item.artworkUrl ? [{ src: item.artworkUrl }] : undefined,
       });
     }
-  }, [volume]);
+  }, [t, volume]);
 
   const toggle = useCallback(() => {
     const audio = audioRef.current!;
     if (!current) return;
     if (audio.paused) {
       setIsLoading(true);
-      void audio.play().catch(() => setError("Unable to resume this stream."));
+      void audio.play().catch(() => setError(t("resumeError")));
     } else {
       audio.pause();
     }
-  }, [current]);
+  }, [current, t]);
 
   const setVolume = useCallback((nextVolume: number) => {
     const clamped = Math.max(0, Math.min(1, nextVolume));
