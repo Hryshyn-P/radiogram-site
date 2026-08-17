@@ -49,9 +49,9 @@ const Home = () => {
             <div className="radio-orbit__ring radio-orbit__ring--one" />
             <div className="radio-orbit__ring radio-orbit__ring--two" />
             <div className="radio-orbit__core"><Radio /></div>
-            <span className="radio-orbit__label radio-orbit__label--one">Tokyo · {t("jazz")}</span>
-            <span className="radio-orbit__label radio-orbit__label--two">London · {t("news")}</span>
-            <span className="radio-orbit__label radio-orbit__label--three">São Paulo · {t("soul")}</span>
+            <span className="radio-orbit__label radio-orbit__label--one">{t("beijing")} · {t("jazz")}</span>
+            <span className="radio-orbit__label radio-orbit__label--two">{t("kyiv")} · {t("news")}</span>
+            <span className="radio-orbit__label radio-orbit__label--three">{t("washington")} · {t("soul")}</span>
           </div>
         </div>
       </section>
