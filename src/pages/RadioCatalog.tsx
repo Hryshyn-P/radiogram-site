@@ -73,7 +73,7 @@ const RadioCatalog = () => {
       preChineseState.current = { countries: selectedCountries, filtersOpen };
       if (!routeCountry && !searchParams.get("country")) {
         setSelectedCountries(["China"]);
-        setFiltersOpen(true);
+        setFiltersOpen(false);
       }
     } else if (leavingChinese && preChineseState.current) {
       setSelectedCountries(preChineseState.current.countries);
