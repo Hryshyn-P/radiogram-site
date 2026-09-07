@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { catalogSelectionsFromLocation } from "@/lib/catalogLocation";
 import { stationInitial } from "@/lib/stationArtwork";
 import { normalizeStation } from "@/lib/radioBrowser";
 import { decodeFacetParam, facetPath, podcastPath, slugify, stationPath } from "@/lib/slug";
@@ -52,5 +53,23 @@ describe("indexable routes", () => {
       const route = facetPath("tag", value);
       expect(decodeFacetParam(route.split("/").at(-1))).toBe(value);
     }
+  });
+
+  it("derives fresh catalog filters when an indexable route changes", () => {
+    const query = new URLSearchParams("language=English&q=news&sort=name");
+    expect(catalogSelectionsFromLocation("France", undefined, query)).toEqual({
+      countries: ["France"],
+      tags: [],
+      languages: ["English"],
+      query: "news",
+      sort: "name",
+    });
+    expect(catalogSelectionsFromLocation(undefined, "Rock", new URLSearchParams())).toEqual({
+      countries: [],
+      tags: ["Rock"],
+      languages: [],
+      query: "",
+      sort: "votes",
+    });
   });
 });

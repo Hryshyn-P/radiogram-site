@@ -11,7 +11,7 @@ const Terms = () => {
           <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
             Terms of Use
           </h1>
-          <p className="mt-4 text-sm text-muted-foreground">Last updated: June 19, 2026</p>
+          <p className="mt-4 text-sm text-muted-foreground">Last updated: September 6, 2026</p>
         </div>
 
         <div className="space-y-8 rounded-2xl border border-border bg-gradient-card p-7 shadow-card md:p-10">
@@ -71,11 +71,25 @@ const Terms = () => {
             does not remove advertising or promotional audio that is embedded in a
             station's own stream.
           </PolicyBlock>
+          <PolicyBlock title="Premium Purchases and Subscriptions">
+            Monthly and yearly subscriptions unlock the Premium features listed
+            in the app while the subscription remains active and renew automatically
+            unless cancelled through Apple. A Lifetime purchase is a non-consumable,
+            one-time purchase: the entitlement to the Premium features included with
+            that purchase does not expire. Lifetime does not mean that Radiogram, its
+            development, maintenance, support, updates, or compatibility with every
+            future operating-system version will continue for the purchaser&apos;s lifetime.
+            It also does not guarantee the permanent availability of any third-party
+            station, stream, directory, API, content, or regional access. Nothing in
+            this section limits any non-waivable consumer rights under applicable law.
+          </PolicyBlock>
           <PolicyBlock title="Availability and Changes">
             The app and its features may be updated, limited, suspended, or removed at
-            any time. Some functionality depends on internet connectivity, device
-            compatibility, and optional permissions such as location access used for
-            nearby station suggestions.
+            any time, subject to applicable law and Apple&apos;s terms. Some functionality
+            depends on internet connectivity, device and operating-system compatibility,
+            optional permissions, and third-party services outside Radiogram&apos;s control.
+            Reasonable efforts may be made to restore or replace unavailable functionality,
+            but no particular resolution or timeframe is guaranteed.
           </PolicyBlock>
           <PolicyBlock title="Disclaimer of Warranties">
             Radiogram is provided on an as-is and as-available basis, without

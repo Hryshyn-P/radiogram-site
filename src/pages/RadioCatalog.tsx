@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Globe2, Grid2X2, Languages, List, LoaderCircle, Radio, RotateCw, Search, SlidersHorizontal, Tag, X } from "lucide-react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import StationCard from "@/components/StationCard";
+import { catalogSelectionsFromLocation, type StationSort } from "@/lib/catalogLocation";
 import { fetchCountries, fetchLanguages, fetchStations, fetchTags } from "@/lib/radioBrowser";
 import { decodeFacetParam, facetPath } from "@/lib/slug";
 import { useSeo } from "@/lib/seo";
@@ -11,9 +12,6 @@ import { useLanguage } from "@/context/LanguageContext";
 
 const PAGE_SIZE = 48;
 const TAG_BATCH_SIZE = 80;
-type StationSort = "votes" | "name" | "clickcount" | "random";
-
-const parseSelections = (value: string | null) => value?.split("|").filter(Boolean).slice(0, 3) || [];
 
 const fetchFilteredStations = async ({
   query, countries, tags, languages, order, offset = 0,
@@ -64,6 +62,19 @@ const RadioCatalog = () => {
   const [filtersOpen, setFiltersOpen] = useState(Boolean(selectedCountries.length || selectedTags.length || selectedLanguages.length));
   const previousLanguage = useRef<typeof language | null>(null);
   const preChineseState = useRef<{ countries: string[]; filtersOpen: boolean } | null>(null);
+
+  // React Router keeps this component mounted when navigating between the
+  // indexable country and tag routes. Keep the filter state aligned with the
+  // URL so the SEO links below update the actual catalog, not only the address.
+  useEffect(() => {
+    const next = catalogSelectionsFromLocation(routeCountry, routeTag, searchParams);
+    setSelectedCountries(next.countries);
+    setSelectedTags(next.tags);
+    setSelectedLanguages(next.languages);
+    setQuery(next.query);
+    setSubmittedQuery(next.query);
+    setSort(next.sort);
+  }, [routeCountry, routeTag, searchParams]);
 
   useEffect(() => {
     const enteringChinese = language === "zh-CN" && previousLanguage.current !== "zh-CN";
