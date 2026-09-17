@@ -3,6 +3,7 @@ import { useEffect } from "react";
 export const SITE_URL = "https://radiogram-site.duckdns.org";
 const DEFAULT_SOCIAL_IMAGE = `${SITE_URL}/app-showcase/01-station-search.webp`;
 const INDEX_ROBOTS = "index,follow,max-image-preview:large";
+const canonicalPath = (path: string) => path === "/" ? "/" : `${path.replace(/\/+$/, "")}/`;
 
 type SeoOptions = {
   title: string;
@@ -26,12 +27,13 @@ const upsertMeta = (selector: string, attribute: "name" | "property", key: strin
 export const useSeo = ({ title, description, path = "/", image, type = "website", noIndex }: SeoOptions) => {
   useEffect(() => {
     const socialImage = image || DEFAULT_SOCIAL_IMAGE;
+    const canonicalUrl = `${SITE_URL}${canonicalPath(path)}`;
     document.title = title;
     upsertMeta('meta[name="description"]', "name", "description", description);
     upsertMeta('meta[property="og:title"]', "property", "og:title", title);
     upsertMeta('meta[property="og:description"]', "property", "og:description", description);
     upsertMeta('meta[property="og:type"]', "property", "og:type", type);
-    upsertMeta('meta[property="og:url"]', "property", "og:url", `${SITE_URL}${path}`);
+    upsertMeta('meta[property="og:url"]', "property", "og:url", canonicalUrl);
     upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
     upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
     upsertMeta('meta[name="robots"]', "name", "robots", noIndex ? "noindex,follow" : INDEX_ROBOTS);
@@ -46,6 +48,6 @@ export const useSeo = ({ title, description, path = "/", image, type = "website"
       canonical.rel = "canonical";
       document.head.appendChild(canonical);
     }
-    canonical.href = `${SITE_URL}${path}`;
+    canonical.href = canonicalUrl;
   }, [description, image, noIndex, path, title, type]);
 };

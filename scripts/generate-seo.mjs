@@ -9,6 +9,8 @@ const apiHost = "https://all.api.radio-browser.info";
 const podcastTerms = ["news", "technology", "history", "science", "comedy", "culture", "business", "music", "society", "education", "sports", "health"];
 const SITEMAP_CHUNK_SIZE = 5_000;
 const CORE_ROUTES = ["/", "/radio", "/podcasts", "/support", "/privacy", "/terms"];
+const canonicalRoute = (route) => route === "/" ? "/" : `${route.replace(/\/+$/, "")}/`;
+const absoluteUrl = (route) => `${SITE_URL}${canonicalRoute(route)}`;
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character]);
 const slugify = (value) => String(value).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72) || "radio";
@@ -18,9 +20,9 @@ const facetRoute = (kind, value) => `/radio/${kind}/${slugify(value)}~${Buffer.f
 
 const breadcrumbLd = (route, title) => {
   const section = route.startsWith("/podcasts") ? "Podcasts" : route.startsWith("/radio") ? "Radio" : null;
-  const items = [{ "@type": "ListItem", position: 1, name: "Radiogram", item: `${SITE_URL}/` }];
-  if (section) items.push({ "@type": "ListItem", position: 2, name: section, item: `${SITE_URL}/${section.toLowerCase()}` });
-  if (route !== "/" && route !== `/${section?.toLowerCase()}`) items.push({ "@type": "ListItem", position: items.length + 1, name: title, item: `${SITE_URL}${route}` });
+  const items = [{ "@type": "ListItem", position: 1, name: "Radiogram", item: absoluteUrl("/") }];
+  if (section) items.push({ "@type": "ListItem", position: 2, name: section, item: absoluteUrl(`/${section.toLowerCase()}`) });
+  if (route !== "/" && route !== `/${section?.toLowerCase()}`) items.push({ "@type": "ListItem", position: items.length + 1, name: title, item: absoluteUrl(route) });
   return { "@type": "BreadcrumbList", itemListElement: items };
 };
 
@@ -40,7 +42,7 @@ const fetchJson = async (url) => {
 };
 
 const withMeta = (template, { title, description, route, image, jsonLd, fallback, noIndex = false }) => {
-  const canonical = `${SITE_URL}${route}`;
+  const canonical = absoluteUrl(route);
   const robots = noIndex ? "noindex,follow" : "index,follow,max-image-preview:large";
   let html = template
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(title)}</title>`)
@@ -116,7 +118,7 @@ const stationPageData = (station) => {
   const description = `Listen to ${name} live from ${country}. ${details || "Free worldwide internet radio stream."} Play online in Radiogram.`;
   return {
     title: `${name} live — listen online | Radiogram`, description, image: station.favicon || undefined,
-    jsonLd: { "@context": "https://schema.org", "@type": "RadioStation", name, url: `${SITE_URL}${stationRoute(station)}`, areaServed: country, genre: (station.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean), image: station.favicon || undefined },
+    jsonLd: { "@context": "https://schema.org", "@type": "RadioStation", name, url: absoluteUrl(stationRoute(station)), areaServed: country, genre: (station.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean), image: station.favicon || undefined },
     fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Live radio from ${escapeHtml(country)}</p><h1 style="font-size:48px">${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(details)}</p><a href="${escapeHtml(stationRoute(station))}" style="color:#ff8c3b">Listen live in Radiogram</a></main>`,
   };
 };
@@ -127,7 +129,7 @@ const podcastPageData = (show) => {
   const description = `Listen to ${name} by ${artist}. Browse the latest podcast episodes and play them online in Radiogram.`;
   return {
     title: `${name} podcast — episodes | Radiogram`, description, image: show.artworkUrl600 || undefined,
-    jsonLd: { "@context": "https://schema.org", "@type": "PodcastSeries", name, author: { "@type": "Organization", name: artist }, url: `${SITE_URL}${podcastRoute(show)}`, image: show.artworkUrl600 || undefined, genre: show.genres || [] },
+    jsonLd: { "@context": "https://schema.org", "@type": "PodcastSeries", name, author: { "@type": "Organization", name: artist }, url: absoluteUrl(podcastRoute(show)), image: show.artworkUrl600 || undefined, genre: show.genres || [] },
     fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Podcast</p><h1 style="font-size:48px">${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p><a href="${escapeHtml(podcastRoute(show))}" style="color:#ff8c3b">Browse episodes</a></main>`,
   };
 };
@@ -237,15 +239,15 @@ const main = async () => {
 
   const routeList = [...routes];
   const sitemapDate = new Date().toISOString().slice(0, 10);
-  const coreSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${CORE_ROUTES.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc></url>`).join("\n")}\n</urlset>\n`;
+  const coreSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${CORE_ROUTES.map((route) => `  <url><loc>${escapeHtml(absoluteUrl(route))}</loc></url>`).join("\n")}\n</urlset>\n`;
   await writeFile(path.join(DIST, "sitemap-core.xml"), coreSitemap, "utf8");
   const sitemapChunks = Array.from({ length: Math.ceil(routeList.length / SITEMAP_CHUNK_SIZE) }, (_, index) => routeList.slice(index * SITEMAP_CHUNK_SIZE, (index + 1) * SITEMAP_CHUNK_SIZE));
   if (sitemapChunks.length === 1) {
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routeList.map((route) => `  <url><loc>${escapeHtml(absoluteUrl(route))}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
     await writeFile(path.join(DIST, "sitemap.xml"), sitemap, "utf8");
   } else {
     for (const [index, chunk] of sitemapChunks.entries()) {
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${SITE_URL}${escapeHtml(route)}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((route) => `  <url><loc>${escapeHtml(absoluteUrl(route))}</loc><changefreq>${route === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}\n</urlset>\n`;
       await writeFile(path.join(DIST, `sitemap-${index + 1}.xml`), sitemap, "utf8");
     }
     const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapChunks.map((_, index) => `  <sitemap><loc>${SITE_URL}/sitemap-${index + 1}.xml</loc><lastmod>${sitemapDate}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`;

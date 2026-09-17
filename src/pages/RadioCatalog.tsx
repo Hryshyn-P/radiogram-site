@@ -12,6 +12,8 @@ import { useLanguage } from "@/context/LanguageContext";
 
 const PAGE_SIZE = 48;
 const TAG_BATCH_SIZE = 80;
+const DEFAULT_BROWSE_COUNTRIES = ["United States Of America", "Germany", "United Kingdom Of Great Britain And Northern Ireland", "France", "Australia", "Canada", "Poland", "Ukraine", "Italy", "Japan"];
+const DEFAULT_BROWSE_TAGS = ["pop", "music", "rock", "news", "jazz", "classical", "electronic", "hip hop", "talk", "sports"];
 
 const fetchFilteredStations = async ({
   query, countries, tags, languages, order, offset = 0,
@@ -210,6 +212,8 @@ const RadioCatalog = () => {
     return normalizedQuery ? languages.filter((item) => item.name.toLocaleLowerCase().includes(normalizedQuery)) : languages;
   }, [languageFilterQuery, languages]);
   const activeFilterCount = selectedCountries.length + selectedTags.length + selectedLanguages.length + (submittedQuery ? 1 : 0);
+  const browseCountries = countries.length ? countries.slice(0, 12).map((item) => item.name) : DEFAULT_BROWSE_COUNTRIES;
+  const browseTags = tags.length ? tags.slice(0, 12).map((item) => item.name) : DEFAULT_BROWSE_TAGS;
   const clearQuery = () => {
     setQuery("");
     setSubmittedQuery("");
@@ -299,8 +303,8 @@ const RadioCatalog = () => {
       )}
 
       <section className="seo-links" aria-label={t("browseCategories")}>
-        <div><h2>{t("browseCountry")}</h2>{countries.slice(0, 12).map((item) => <Link key={item.name} to={facetPath("country", item.name)}>{item.name}</Link>)}</div>
-        <div><h2>{t("browseGenre")}</h2>{tags.slice(0, 12).map((item) => <Link key={item.name} to={facetPath("tag", item.name)}>{item.name}</Link>)}</div>
+        <div><h2>{t("browseCountry")}</h2>{browseCountries.map((name) => <Link key={name} to={facetPath("country", name)}>{name}</Link>)}</div>
+        <div><h2>{t("browseGenre")}</h2>{browseTags.map((name) => <Link key={name} to={facetPath("tag", name)}>{name}</Link>)}</div>
       </section>
     </div>
   );
