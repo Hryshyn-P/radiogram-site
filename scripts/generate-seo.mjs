@@ -39,11 +39,13 @@ const fetchJson = async (url) => {
   }
 };
 
-const withMeta = (template, { title, description, route, image, jsonLd, fallback }) => {
+const withMeta = (template, { title, description, route, image, jsonLd, fallback, noIndex = false }) => {
   const canonical = `${SITE_URL}${route}`;
+  const robots = noIndex ? "noindex,follow" : "index,follow,max-image-preview:large";
   let html = template
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(title)}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${escapeHtml(description)}">`)
+    .replace(/<meta name="robots"[^>]*>/, `<meta name="robots" content="${robots}">`)
     .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${canonical}">`)
     .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escapeHtml(title)}">`)
     .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escapeHtml(description)}">`)
@@ -193,6 +195,13 @@ const main = async () => {
     await writeRoute(template, route, data);
     routes.add(route);
   }
+  await writeFile(path.join(DIST, "404.html"), withMeta(template, {
+    route: "/404",
+    title: "Page not found | Radiogram",
+    description: "The page you requested could not be found.",
+    noIndex: true,
+    fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Radiogram</p><h1 style="font-size:48px">Page not found</h1><p>The page you requested could not be found.</p><p><a href="/" style="color:#ff8c3b">Return to Radiogram</a></p></main>`,
+  }), "utf8");
   for (const country of countries) {
     const route = facetRoute("country", country.name);
     await writeRoute(template, route, shellPageData(`Radio stations in ${country.name} — listen live | Radiogram`, `Listen to ${country.stationcount.toLocaleString()} live internet radio stations from ${country.name}. Browse free streams by popularity, name, genre, and language in Radiogram.`, `Radio in ${country.name}`));

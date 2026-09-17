@@ -38,9 +38,6 @@ jobs:
           SEO_STATION_LIMIT: 20000
           SEO_PODCAST_LIMIT: 600
 
-      - name: Add SPA fallback
-        run: cp dist/index.html dist/404.html
-
       - name: Configure Pages
         uses: actions/configure-pages@v6
 
