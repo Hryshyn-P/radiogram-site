@@ -139,6 +139,8 @@ const shellPageData = (title, description, heading, type = "CollectionPage") => 
   fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Radiogram</p><h1 style="font-size:48px">${escapeHtml(heading)}</h1><p>${escapeHtml(description)}</p></main>`,
 });
 
+const catalogFallback = ({ eyebrow, heading, description, sections }) => `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">${escapeHtml(eyebrow)}</p><h1 style="font-size:48px">${escapeHtml(heading)}</h1><p>${escapeHtml(description)}</p>${sections.map(({ heading: sectionHeading, links }) => `<section><h2>${escapeHtml(sectionHeading)}</h2><ul>${links.map(({ href, label, detail }) => `<li><a href="${escapeHtml(href)}" style="color:#ff8c3b">${escapeHtml(label)}</a>${detail ? ` — ${escapeHtml(detail)}` : ""}</li>`).join("")}</ul></section>`).join("")}</main>`;
+
 const supportFaq = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -185,8 +187,28 @@ const main = async () => {
       jsonLd: { "@context": "https://schema.org", "@type": "WebPage", name: "Radiogram", description: "Worldwide live radio and podcast player for the web, iPhone, iPad, and Mac.", isPartOf: { "@id": `${SITE_URL}/#website` } },
       fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Worldwide radio and podcasts</p><h1 style="font-size:48px">Listen to live radio and podcasts with Radiogram</h1><p>Radiogram lets you explore thousands of live radio stations and podcasts online. The native app for iPhone, iPad, and Mac adds favorites, song recognition, native playback controls, and widgets.</p><p><a href="/radio" style="color:#ff8c3b">Explore live radio</a> · <a href="/podcasts" style="color:#ff8c3b">Discover podcasts</a> · <a href="/support" style="color:#ff8c3b">Get support</a></p></main>`,
     }],
-    ["/radio", shellPageData("Live radio stations from around the world | Radiogram", "Explore live radio from around the world. Search and filter thousands of stations by country, genre, popularity, and name.", "Explore live radio")],
-    ["/podcasts", shellPageData("Discover podcasts and episodes | Radiogram", "Search podcasts from the Apple Podcasts catalog, browse shows, and listen to episodes online free in Radiogram.", "Find your next listen")],
+    ["/radio", {
+      title: "Live radio stations from around the world | Radiogram",
+      description: "Explore live radio from around the world. Search and filter thousands of stations by country, genre, popularity, and name.",
+      jsonLd: { "@context": "https://schema.org", "@type": "CollectionPage", name: "Explore live radio", description: "Search and browse live radio stations by country, genre, popularity, and name." },
+      fallback: catalogFallback({
+        eyebrow: "Worldwide live radio", heading: "Explore live radio stations", description: "Search and listen to free live radio from around the world. Browse popular stations, countries, and genres in Radiogram.",
+        sections: [
+          { heading: "Popular live stations", links: stations.slice(0, 12).map((station) => ({ href: stationRoute(station), label: station.name, detail: station.country || "Live radio" })) },
+          { heading: "Browse radio by country", links: countries.slice(0, 10).map((country) => ({ href: facetRoute("country", country.name), label: country.name, detail: `${country.stationcount.toLocaleString()} stations` })) },
+          { heading: "Browse radio by genre", links: tags.slice(0, 10).map((tag) => ({ href: facetRoute("tag", tag.name), label: tag.name, detail: `${tag.stationcount.toLocaleString()} stations` })) },
+        ],
+      }),
+    }],
+    ["/podcasts", {
+      title: "Discover podcasts and episodes | Radiogram",
+      description: "Search podcasts from the Apple Podcasts catalog, browse shows, and listen to episodes online free in Radiogram.",
+      jsonLd: { "@context": "https://schema.org", "@type": "CollectionPage", name: "Find your next listen", description: "Search podcast shows and listen to episodes online in Radiogram." },
+      fallback: catalogFallback({
+        eyebrow: "Podcast discovery", heading: "Discover podcasts and episodes", description: "Search podcast shows and listen to episodes online in Radiogram.",
+        sections: [{ heading: "Featured podcasts", links: podcasts.slice(0, 12).map((show) => ({ href: podcastRoute(show), label: show.collectionName, detail: show.artistName || "Podcast" })) }],
+      }),
+    }],
     ["/support", { ...shellPageData("Radiogram Support", "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features.", "Radiogram Support", "WebPage"), jsonLd: [{ "@context": "https://schema.org", "@type": "WebPage", name: "Radiogram Support", description: "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features." }, supportFaq] }],
     ["/privacy", shellPageData("Privacy Policy | Radiogram", "Read the Radiogram privacy policy for the website and Apple platform app.", "Privacy Policy", "WebPage")],
     ["/terms", shellPageData("Terms of Use | Radiogram", "Read the terms of use for Radiogram live radio, podcasts, and Apple platform app.", "Terms of Use", "WebPage")],
