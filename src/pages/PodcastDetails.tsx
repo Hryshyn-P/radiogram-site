@@ -23,7 +23,7 @@ const PodcastDetails = () => {
   useSeo({
     title: show ? `${show.name} — ${t("podcastEpisodes")} | Radiogram` : t("podcastSeoTitle"),
     description: show ? `${t("listenTo")} ${show.name}${show.artistName ? ` — ${show.artistName}` : ""}. ${t("podcastSeoDescription")}` : t("podcastSeoDescription"),
-    path: location.pathname, image: show?.artworkUrl, noIndex: !collectionId,
+    path: location.pathname, image: show?.artworkUrl, noIndex: !collectionId || error,
   });
 
   useEffect(() => {

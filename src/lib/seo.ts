@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
 export const SITE_URL = "https://radiogram-site.duckdns.org";
+const DEFAULT_SOCIAL_IMAGE = `${SITE_URL}/app-showcase/01-station-search.webp`;
+const INDEX_ROBOTS = "index,follow,max-image-preview:large";
 
 type SeoOptions = {
   title: string;
@@ -23,6 +25,7 @@ const upsertMeta = (selector: string, attribute: "name" | "property", key: strin
 
 export const useSeo = ({ title, description, path = "/", image, type = "website", noIndex }: SeoOptions) => {
   useEffect(() => {
+    const socialImage = image || DEFAULT_SOCIAL_IMAGE;
     document.title = title;
     upsertMeta('meta[name="description"]', "name", "description", description);
     upsertMeta('meta[property="og:title"]', "property", "og:title", title);
@@ -31,11 +34,11 @@ export const useSeo = ({ title, description, path = "/", image, type = "website"
     upsertMeta('meta[property="og:url"]', "property", "og:url", `${SITE_URL}${path}`);
     upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
     upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
-    upsertMeta('meta[name="robots"]', "name", "robots", noIndex ? "noindex,follow" : "index,follow");
-    if (image) {
-      upsertMeta('meta[property="og:image"]', "property", "og:image", image);
-      upsertMeta('meta[name="twitter:image"]', "name", "twitter:image", image);
-    }
+    upsertMeta('meta[name="robots"]', "name", "robots", noIndex ? "noindex,follow" : INDEX_ROBOTS);
+    upsertMeta('meta[property="og:image"]', "property", "og:image", socialImage);
+    upsertMeta('meta[name="twitter:image"]', "name", "twitter:image", socialImage);
+    upsertMeta('meta[property="og:image:alt"]', "property", "og:image:alt", title);
+    upsertMeta('meta[name="twitter:image:alt"]', "name", "twitter:image:alt", title);
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

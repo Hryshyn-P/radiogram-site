@@ -177,6 +177,12 @@ const main = async () => {
   }
 
   const staticPages = [
+    ["/", {
+      title: "Radiogram — live radio and podcasts from around the world",
+      description: "Listen to thousands of live radio stations and discover podcasts online. Get Radiogram for iPhone, iPad, and Mac for favorites, song recognition, and native playback.",
+      jsonLd: { "@context": "https://schema.org", "@type": "WebPage", name: "Radiogram", description: "Worldwide live radio and podcast player for the web, iPhone, iPad, and Mac.", isPartOf: { "@id": `${SITE_URL}/#website` } },
+      fallback: `<main style="max-width:760px;margin:80px auto;padding:24px;font-family:system-ui;color:#ffebdd"><p style="color:#ff8c3b;text-transform:uppercase;letter-spacing:.12em">Worldwide radio and podcasts</p><h1 style="font-size:48px">Listen to live radio and podcasts with Radiogram</h1><p>Radiogram lets you explore thousands of live radio stations and podcasts online. The native app for iPhone, iPad, and Mac adds favorites, song recognition, native playback controls, and widgets.</p><p><a href="/radio" style="color:#ff8c3b">Explore live radio</a> · <a href="/podcasts" style="color:#ff8c3b">Discover podcasts</a> · <a href="/support" style="color:#ff8c3b">Get support</a></p></main>`,
+    }],
     ["/radio", shellPageData("Live radio stations from around the world | Radiogram", "Explore live radio from around the world. Search and filter thousands of stations by country, genre, popularity, and name.", "Explore live radio")],
     ["/podcasts", shellPageData("Discover podcasts and episodes | Radiogram", "Search podcasts from the Apple Podcasts catalog, browse shows, and listen to episodes online free in Radiogram.", "Find your next listen")],
     ["/support", { ...shellPageData("Radiogram Support", "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features.", "Radiogram Support", "WebPage"), jsonLd: [{ "@context": "https://schema.org", "@type": "WebPage", name: "Radiogram Support", description: "Get help with Radiogram radio playback, subscriptions, favorites, song recognition, and Apple device features." }, supportFaq] }],

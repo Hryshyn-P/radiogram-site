@@ -34,7 +34,7 @@ const StationDetails = () => {
     path: location.pathname,
     image: station?.imageUrl,
     type: "music.radio_station",
-    noIndex: !uuid,
+    noIndex: !uuid || error,
   });
 
   useEffect(() => {

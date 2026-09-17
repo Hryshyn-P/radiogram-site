@@ -1,10 +1,18 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSeo } from "@/lib/seo";
 
 const NotFound = () => {
   const location = useLocation();
   const { t } = useLanguage();
+
+  useSeo({
+    title: `404 — Radiogram`,
+    description: t("pageNotFound"),
+    path: location.pathname,
+    noIndex: true,
+  });
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
