@@ -54,6 +54,7 @@ const Layout = () => {
           <a href="https://web-review.com" target="_blank" rel="dofollow"><img src="https://web-review.com/badge.png" alt="Featured on Web Review" width="200" height="54" loading="lazy" /></a>
           <a href="https://toolfame.com/item/radiogram" target="_blank" rel="noopener noreferrer"><img src="https://toolfame.com/badge-light.svg" alt="Featured on toolfame.com" style={{ height: "54px", width: "auto" }} loading="lazy" /></a>
           <a href="https://saasfame.com/item/radiogram" target="_blank" rel="noopener noreferrer"><img src="https://saasfame.com/badge-light.svg" alt="Featured on saasfame.com" style={{ height: "54px", width: "auto" }} loading="lazy" /></a>
+          <a href="https://dofollow.tools" target="_blank" rel="noopener noreferrer"><img src="https://dofollow.tools/badge/badge_light.svg" alt="Featured on Dofollow.Tools" width="200" height="54" loading="lazy" /></a>
           <a href="https://turbo0.com/item/radiogram" target="_blank" rel="noopener noreferrer"><img src="https://img.turbo0.com/badge-listed-light.svg" alt="Listed on Turbo0" height="54" loading="lazy" /></a>
           <a href="https://openhunts.com" target="_blank" title="OpenHunts Club" rel="noopener"><img alt="OpenHunts Club Member" height="105" src="https://cdn.openhunts.com/badges/club.webp" style={{ width: "195px", height: "auto" }} width="486" loading="lazy" /></a>
         </div>
