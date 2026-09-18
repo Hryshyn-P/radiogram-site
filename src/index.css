@@ -167,6 +167,9 @@ button { color: inherit; }
   .catalog-toolbar { grid-template-columns: 1fr auto auto; }.catalog-toolbar .search-field { grid-column: 1 / -1; }
   .station-hero { grid-template-columns: 300px 1fr; gap: 28px; }.podcast-hero { grid-template-columns: 220px 1fr; gap: 32px; }.station-hero__visual { --cover-size: 220px; --vinyl-size: 198px; --vinyl-left: 102px; width: 300px; }.podcast-hero__art { width: 220px; height: 220px; }.app-upsell { grid-template-columns: auto 1fr; }.app-upsell > .primary-button { grid-column: 2; justify-self: start; }
   .site-footer__grid { grid-template-columns: repeat(2, 1fr); }
+  .site-footer__badges { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); align-items: center; justify-content: stretch; gap: 10px; }
+  .site-footer__badges a { width: 100% !important; max-width: none; min-width: 0; min-height: 48px; }
+  .site-footer__badges img { max-width: 100% !important; width: auto !important; height: auto !important; max-height: 52px !important; }
   .filter-panel__grid { grid-template-columns: 1fr 1fr; }.facet-pane--languages { grid-column: 1 / -1; }
   .app-showcase__track { grid-auto-columns: clamp(245px, 38vw, 285px); }
   .app-tour__inner { grid-template-columns: minmax(0, 1fr) minmax(280px, 330px); gap: 48px; }.app-tour__copy h2 { font-size: 55px; }
@@ -183,7 +186,11 @@ button { color: inherit; }
   .station-hero, .podcast-hero { grid-template-columns: 1fr; padding-top: 35px; }.station-hero__visual { --cover-size: min(260px, 70vw); --vinyl-size: min(224px, 60vw); --vinyl-left: min(120px, 32vw); width: min(350px, 100%); }.podcast-hero__art { width: min(260px, 78vw); height: min(260px, 78vw); }.station-hero h1, .podcast-hero h1 { font-size: 50px; }.app-upsell { grid-template-columns: 1fr; }.app-upsell > .primary-button { grid-column: auto; justify-self: stretch; }
   .podcast-search { grid-template-columns: 1fr 1fr; }.podcast-search .search-field { grid-column: 1 / -1; }.episode-row { grid-template-columns: 54px 1fr auto; gap: 10px; }.episode-row__art { width: 54px; height: 54px; }.episode-row__copy p { display: none; }.episode-row .round-button { width: 42px; height: 42px; }
   .volume-control, .player-download span { display: none; }.app-player__inner { min-height: 74px; }.app-player__track small { max-width: 190px; }.app-player__controls { gap: 5px; }.app-player__art { width: 47px; height: 47px; }
-  .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 30px 20px; }.site-footer__grid > div:first-child { grid-column: 1 / -1; }.site-footer__bottom { flex-direction: column; gap: 5px; }
+  .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 30px 20px; }.site-footer__grid > div:first-child { grid-column: 1 / -1; }
+  .site-footer__badges { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
+  .site-footer__badges a { min-height: 44px; padding-inline: 2px; }
+  .site-footer__badges img { max-height: 48px !important; }
+  .site-footer__bottom { flex-direction: column; gap: 5px; }
   .app-showcase { padding-block: 70px 64px; }.app-showcase__heading { align-items: flex-start; margin-bottom: 22px; }.app-showcase__heading h2 { font-size: 42px; }.app-showcase__heading p { font-size: 14px; }.app-showcase__controls { align-self: flex-end; }.app-showcase__controls > span { display: none; }.app-showcase__controls button { width: 38px; height: 38px; }.app-showcase__track { grid-auto-columns: min(78vw, 285px); gap: 13px; }.app-showcase figure { opacity: .42; }.app-showcase figcaption { padding-top: 10px; }.app-showcase__progress { margin-top: 8px; }
   .app-tour { padding-block: 72px; }.app-tour__inner { grid-template-columns: 1fr; gap: 38px; }.app-tour__copy h2 { font-size: 46px; }.app-tour__copy p { font-size: 14px; }.app-tour__media { width: min(100%, 350px); border-radius: 32px; }.app-tour__media iframe, .app-tour__poster { border-radius: 25px; }.app-tour__play { width: 70px; height: 70px; }
 }
