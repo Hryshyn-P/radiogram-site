@@ -57,6 +57,7 @@ const Layout = () => {
           <a href="https://wired.business" target="_blank" rel="noopener"><img src="https://wired.business/badge0-light.svg" alt="Featured on Wired Business" width="200" height="54" loading="lazy" /></a>
           <a href="https://startupfa.st" target="_blank" title="Powered by Startup Fast"><img src="https://startupfa.st/images/badges/powered-by-light.svg" alt="Powered by Startup Fast" width="150" height="44" loading="lazy" /></a>
           <a href="https://auraplusplus.com/projects/radiogram" target="_blank" rel="noopener" title="View this project on Aura++"><img src="https://auraplusplus.com/images/badges/featured-on-light.svg" alt="Featured on Aura++" width="265" height="58" loading="lazy" /></a>
+          <a href="https://startupog.com" target="_blank" rel="noopener"><img src="https://startupog.com/startupog-badge.webp" alt="Featured on StartupOG" width="150" height="75" loading="lazy" /></a>
           <a href="https://turbo0.com/item/radiogram" target="_blank" rel="noopener noreferrer"><img src="https://img.turbo0.com/badge-listed-light.svg" alt="Listed on Turbo0" height="54" loading="lazy" /></a>
           <a href="https://openhunts.com" target="_blank" title="OpenHunts Club" rel="noopener"><img alt="OpenHunts Club Member" height="105" src="https://cdn.openhunts.com/badges/club.webp" style={{ width: "195px", height: "auto" }} width="486" loading="lazy" /></a>
         </div>
